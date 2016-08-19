@@ -481,13 +481,13 @@
 
   =helm= to browser perldoc
   #+BEGIN_SRC emacs-lisp
-    (use-package helm-perldoc 
+    (use-package helm-perldoc
       :ensure t)
   #+END_SRC
 
   Perl6 packages
   #+BEGIN_SRC emacs-lisp
-    (use-package perl6-mode 
+    (use-package perl6-mode
       :ensure t)
     (use-package flycheck-perl6
       :ensure t)
