@@ -1,0 +1,764 @@
+#+TITLE: Emacs configuration file
+#+AUTHOR: Bernhard Specht
+#+BABEL: :cache yes
+#+PROPERTY: header-args :tangle yes
+
+* Initalisation
+  Byte compile after save
+  #+BEGIN_SRC emacs-lisp
+    (defun tangle-init ()
+      "If the current buffer is 'init.org' the code-blocks are tangled, and the tangled file is compiled."
+      (when (equal (buffer-file-name)
+		   (expand-file-name (concat user-emacs-directory "init.org")))
+	;; Avoid running hooks when tangling.
+	(let ((prog-mode-hook nil))
+	  (org-babel-tangle)
+	  (byte-compile-file (concat user-emacs-directory "init.el")))))
+     (add-hook 'after-save-hook 'tangle-init)
+   #+END_SRC
+
+  Add =melpa= as source for getting packages
+  #+BEGIN_SRC emacs-lisp
+    (require 'package)
+    (setq package-enable-at-startup nil)
+    (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
+    (package-initialize)
+  #+END_SRC
+
+  Bootstrap use-package
+  #+BEGIN_SRC emacs-lisp
+    (unless (package-installed-p 'use-package)
+      (package-refresh-contents)
+      (package-install 'use-package))
+
+    (require 'use-package)
+  #+END_SRC
+
+  Let Emacs start as server for shell clients.
+  #+BEGIN_SRC emacs-lisp
+    (server-start)
+  #+END_SRC
+
+* File-to-Mode mapping
+  Define via filename or extension the major mode for editing
+  #+BEGIN_SRC emacs-lisp
+    (add-to-list 'auto-mode-alist '("\\.pdf\\'" . pdf-tools-install))
+    (add-to-list 'auto-mode-alist '("\\.psgi$" . cperl-mode))
+    (add-to-list 'auto-mode-alist '("\\.t\\'"  . cperl-mode))
+    (add-to-list 'auto-mode-alist '("cpanfile" . cperl-mode))
+    (add-to-list 'auto-mode-alist '("\\.phtml\\'" . web-mode))
+    (add-to-list 'auto-mode-alist '("\\.inc\\'" . web-mode))
+    (add-to-list 'auto-mode-alist '("\\.tpl\\'" . web-mode))
+    (add-to-list 'auto-mode-alist '("\\.php\\'" . php-mode))
+    (add-to-list 'auto-mode-alist '("\\.blade\\.php\\'" . web-mode))
+    (add-to-list 'auto-mode-alist '("\\.jsp\\'" . web-mode))
+    (add-to-list 'auto-mode-alist '("\\.as[cp]x\\'" . web-mode))
+    (add-to-list 'auto-mode-alist '("\\.erb\\'" . web-mode))
+    (add-to-list 'auto-mode-alist '("\\.mustache\\'" . web-mode))
+    (add-to-list 'auto-mode-alist '("\\.djhtml\\'" . web-mode))
+    (add-to-list 'auto-mode-alist '("\\.*tpl\\'" . web-mode))
+    (add-to-list 'auto-mode-alist '("\\.*tml\\'" . web-mode))
+    (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
+    (add-to-list 'auto-mode-alist '("/\\(views\\|html\\|templates\\)/.*\\.php\\'" . web-mode))
+    (add-to-list 'auto-mode-alist '("\\.*tt\\'" . web-mode))
+    (add-to-list 'auto-mode-alist '("\\.*tt2\\'" . web-mode))
+    (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
+  #+END_SRC
+
+* Convenience
+  Answering with "yes" and "no" is annoying. Use "y" and "n" instead.
+  #+BEGIN_SRC emacs-lisp
+    (fset 'yes-or-no-p 'y-or-n-p)
+  #+END_SRC
+
+  Autosave into one single directory
+  #+BEGIN_SRC emacs-lisp
+    (defvar emacs-autosave-directory
+      (concat user-emacs-directory "autosaves/")
+      "This variable dictates where to put auto saves. It is set to a
+          directory called autosaves located wherever your .emacs.d/ is
+          located.")
+
+    (setq backup-directory-alist
+          `((".*" . ,emacs-autosave-directory))
+          auto-save-file-name-transforms
+          `((".*" ,emacs-autosave-directory t)))
+  #+END_SRC
+
+  Only tabs
+  #+BEGIN_SRC emacs-lisp
+    (setq indent-tabs-mode nil)
+  #+END_SRC
+
+  Some usefull defaults
+  #+BEGIN_SRC emacs-lisp
+    (setq auto-revert-interval 1            ; Refresh buffers fast
+          custom-file (make-temp-file "")   ; Discard customization's
+          default-input-method "TeX"        ; Use TeX when toggling input method
+          echo-keystrokes 0.1               ; Show keystrokes asap
+          inhibit-startup-message t         ; No splash screen please
+          initial-scratch-message nil       ; Clean scratch buffer
+          recentf-max-saved-items 100       ; Show more recent files
+          ring-bell-function 'ignore        ; Quiet
+          sentence-end-double-space nil     ; No double space
+          set-language-environment "UTF-8") ; utf8 everywhere
+  #+END_SRC
+
+  Provide help for keybindings.
+  #+BEGIN_SRC emacs-lisp
+    (use-package which-key
+      :ensure t
+      :config
+      (which-key-mode 1))
+  #+END_SRC
+
+* Appearance
+  Disable all gui bars
+  #+BEGIN_SRC emacs-lisp
+    (dolist (mode
+             '(tool-bar-mode                ; No toolbars, more room for text
+               scroll-bar-mode              ; No scroll bars either
+               blink-cursor-mode            ; The blinking cursor gets old
+               menu-bar-mode))              ; No menu-bar
+      (funcall mode 0))
+  #+END_SRC
+
+  Use the dark atom theme
+  #+BEGIN_SRC emacs-lisp
+    (use-package atom-dark-theme
+      :ensure t
+      :config
+      (load-theme 'atom-dark 'NO-CONFIRM))
+  #+END_SRC
+
+  Nice bottom-bar
+  #+BEGIN_SRC emacs-lisp
+  (use-package telephone-line
+    :ensure t
+    :config
+    (telephone-line-mode 1))
+  #+END_SRC
+
+  Mark matching brackets
+  #+BEGIN_SRC emacs-lisp
+    (use-package smartparens
+      :ensure t
+      :config
+      (show-paren-mode 1))
+  #+END_SRC
+
+* Projekt Management
+  Manage projects with =projectile=
+  #+BEGIN_SRC emacs-lisp
+    (use-package projectile
+      :ensure t
+      :config
+      (projectile-global-mode))
+  #+END_SRC
+
+  Project explorer, rarely used
+  #+BEGIN_SRC emacs-lisp
+    (use-package neotree
+      :ensure t)
+  #+END_SRC
+
+  Diff directories, projects and stuff
+  #+BEGIN_SRC emacs-lisp
+    (use-package ztree
+      :ensure t)
+  #+END_SRC
+
+* Helm - Awesome interface for nearly everything
+  Helm with some usefull defaults.
+  #+BEGIN_SRC emacs-lisp
+    (use-package helm
+      :defer t
+      :ensure t
+      :bind (("C-c h" . helm-command-prefix)
+             ("M-x" . helm-M-x)
+             ("M-y" . helm-show-kill-ring)
+             ("C-x C-f" . helm-find-files))
+      :config
+      (require 'helm-config)
+      (setq helm-split-window-in-side-p t            ; helm buffer in current buffer
+            helm-move-to-line-cycle-in-source t      ; to end or beginning when reaching end of src
+            helm-ff-search-library-in-sexp t         ; search for library in `require' and `declare-function' sexp.
+            helm-scroll-amount 8                     ; scroll 8 lines other window using M-<next>/M-<prior>
+            helm-ff-file-name-history-use-recentf t) ; search recent files
+      (setq helm-swoop-speed-or-color t)             ; syntax highlighting for swoop
+      (setq projectile-completion-system 'helm)      ; use helm for projectile
+      (helm-mode)
+      (helm-projectile-on)
+      ; helm-maps don't work in the bind section
+      (define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action)
+      (define-key helm-map (kbd "C-z" ) 'helm-select-action))
+  #+END_SRC
+
+  Use =helm= interface with =projectile=
+  #+BEGIN_SRC emacs-lisp
+    (use-package helm-projectile
+      :ensure t
+      :config
+      (setq projectile-completion-system 'helm)
+      (helm-projectile-on))
+  #+END_SRC
+
+* Auto Completion
+  Complete-Anything!
+  #+BEGIN_SRC emacs-lisp
+    (use-package company
+      :ensure t
+      :config
+      (setq company-idle-delay 0
+            company-echo-delay 0
+            company-dabbrev-downcase nil
+            company-minimum-prefix-length 2
+            ompany-tooltip-limit 20
+            company-selection-wrap-around t
+            company-transformers '(company-sort-by-occurrence
+                                   company-sort-by-backend-importance))
+      (global-company-mode))
+  #+END_SRC
+
+  Fit completion popup to theme
+  #+BEGIN_SRC emacs-lisp
+    (require 'color)
+    (let ((bg (face-attribute 'default :background)))
+      (custom-set-faces
+       `(company-tooltip ((t (:inherit default :background ,(color-lighten-name bg 2)))))
+       `(company-scrollbar-bg ((t (:background ,(color-lighten-name bg 10)))))
+       `(company-scrollbar-fg ((t (:background ,(color-lighten-name bg 5)))))
+       `(company-tooltip-selection ((t (:inherit font-lock-function-name-face))))
+       `(company-tooltip-common ((t (:inherit font-lock-constant-face))))))
+  #+END_SRC
+
+  Complete or Indent with =<tab>=
+  #+BEGIN_SRC emacs-lisp
+    (defun complete-or-indent ()
+      (interactive)
+      (if (company-manual-begin)
+          (company-complete-common)
+        (indent-according-to-mode)))
+  #+END_SRC
+
+  For snippets =yasnippet= with company backend.
+  #+BEGIN_SRC emacs-lisp
+    (use-package yasnippet
+      :ensure t
+      :config
+      (yas-global-mode 1))
+
+    ;(use-package company-yasnippet
+      ;:ensure t)
+  #+END_SRC
+
+  Fuzzy complete
+  #+BEGIN_SRC emacs-lisp
+    (use-package company-flx
+      :ensure t
+      :config
+      (company-flx-mode +1))
+  #+END_SRC
+
+* Syntax/Spell Checking
+  =flycheck= as syntax checker interface
+  #+BEGIN_SRC emacs-lisp
+    (use-package flycheck
+      :ensure t
+      :config
+      (global-flycheck-mode))
+  #+END_SRC
+
+  =flyspell= as spell checker interace together
+  #+BEGIN_SRC emacs-lisp
+    (use-package flyspell
+      :ensure t
+      :config
+      (setq flyspell-issue-message-flag nil)) ; performance
+  #+END_SRC
+
+* Common functions
+  Rename current buffer and file
+  #+BEGIN_SRC emacs-lisp
+    (defun rename-file-and-buffer (new-name)
+      "Renames both current buffer and file it's visiting to NEW-NAME."
+      (interactive "sNew name: ")
+      (let ((name (buffer-name))
+            (filename (buffer-file-name)))
+        (if (not filename)
+            (message "Buffer '%s' is not visiting a file!" name)
+          (if (get-buffer new-name)
+              (message "A buffer named '%s' already exists!" new-name)
+            (progn
+              (rename-file name new-name 1)
+              (rename-buffer new-name)
+              (set-visited-file-name new-name)
+              (set-buffer-modified-p nil))))))
+  #+END_SRC
+
+  Kill all buffers except current
+  #+BEGIN_SRC emacs-lisp
+  (defun kill-other-buffers ()
+    "Kill all other buffers."
+    (interactive)
+    (mapc 'kill-buffer
+	  (delq (current-buffer) (buffer-list))))
+  #+END_SRC
+
+  Use =helm-swoop= over multiple lines
+  #+BEGIN_SRC emacs-lisp
+    (defun helm-swoop-multiline-4 ()
+      (interactive)
+      (helm-swoop :$query "" :$multiline 4))
+  #+END_SRC
+
+  Use perl tidy on regions and functions
+  #+BEGIN_SRC emacs-lisp
+    (defun perltidy-region ()
+      "Run perltidy on the current region."
+      (interactive)
+      (save-excursion
+        (shell-command-on-region (point) (mark) "perltidy-sweet -q" nil t)))
+
+    (defun perltidy-defun ()
+      "Run perltidy on the current defun."
+      (interactive)
+      (save-excursion (mark-defun)
+                      (perltidy-region)))
+  #+END_SRC
+
+* Web Development
+  Interact with browser using =skewer=
+  #+BEGIN_SRC emacs-lisp
+    (use-package skewer-mode
+      :ensure t
+      :config
+      (add-hook 'js2-mode-hook 'skewer-mode)
+      (add-hook 'css-mode-hook 'skewer-css-mode)
+      (add-hook 'html-mode-hook 'skewer-html-mode))
+  #+END_SRC
+
+  Use =web-mode= as major mode for =html, ...=
+  #+BEGIN_SRC emacs-lisp
+    (use-package web-mode
+      :ensure t
+      :defer t
+      :bind (:map web-mode-map
+                  ("C-c C-e" . web-mode-element-close)
+                  ("C-<tab>" . company-web-html))
+      :config
+      (setq-default web-mode-enable-auto-pairing t
+                    web-mode-enable-auto-opening t
+                    web-mode-enable-auto-indentation t
+                    web-mode-enable-block-face t
+                    web-mode-enable-part-face t
+                    web-mode-enable-comment-keywords t
+                    web-mode-enable-css-colorization t
+                    web-mode-enable-current-element-highlight t
+                    web-mode-enable-heredoc-fontification t
+                    web-mode-enable-engine-detection t
+                    web-mode-markup-indent-offset 2
+                    web-mode-css-indent-offset 2
+                    web-mode-code-indent-offset 2
+                    web-mode-style-padding 2
+                    web-mode-script-padding 2
+                    web-mode-block-padding 0
+                    web-mode-comment-style 2)
+      (custom-set-faces
+       '(web-mode-html-tag-face
+         ((t (:foreground "#729fcf"))))
+       '(web-mode-html-tag-bracket-face
+         ((t (:foreground "#FFE84B"))))
+       '(web-mode-current-element-highlight-face
+         ((t (:foreground "#FF8A4B"))))
+       '(web-mode-current-element-highlight-face
+         ((t (:background "#000000"
+                          :foreground "#FF8A4B")))))
+      (add-hook 'web-mode-hook
+                '(lambda ()
+                   (local-set-key (kbd "RET") 'newline-and-indent)
+                   (setq smartparens-mode nil)))
+      (add-hook 'web-mode-before-auto-complete-hooks
+                  '(lambda ()
+                     (let ((web-mode-cur-language
+                            (web-mode-language-at-pos)))
+                       (if (string= web-mode-cur-language "php")
+                           (yas-activate-extra-mode 'php-mode)
+                         (yas-deactivate-extra-mode 'php-mode))
+                       (if (string= web-mode-cur-language "css")
+                           (setq emmet-use-css-transform t)
+                         (setq emmet-use-css-transform nil))))))
+  #+END_SRC
+
+  =company-web= for auto complete in web mode
+  #+BEGIN_SRC emacs-lisp
+    (use-package company-web
+      :ensure t
+      :defer t
+      :config
+      (add-to-list 'company-backends '(company-web-html))
+      (add-to-list 'company-backends '(company-web-jade)))
+  #+END_SRC
+
+* Javascript
+  Use =js2-mode= as mojor mode for editing Javascript
+  #+BEGIN_SRC emacs-lisp
+    (use-package js2-mode
+      :ensure t)
+  #+END_SRC
+
+  =tern= for source code navigation
+  #+BEGIN_SRC emacs-lisp
+    (use-package tern
+      :ensure t)
+  #+END_SRC
+
+  =company-tern= for auto complete
+  #+BEGIN_SRC emacs-lisp
+    (use-package company-tern
+      :ensure t
+      :config
+      (add-to-list 'company-backends '(company-tern)))
+  #+END_SRC
+
+* Perl/Perl6
+  =cperl-mode= prefered to =perl-mode=
+  #+BEGIN_SRC emacs-lisp
+    (use-package cperl-mode
+      :ensure t
+      :bind (("C-c p" . perltidy-region)
+             ("C-c f" . perltidy-defun)
+             :map cperl-mode-map
+         ("C-m" . newline-and-indent)
+         ("C-c d" . helm-perldoc)
+         ("C-c h" . helm-perldoc:history))
+      :config
+      (setq cperl-indent-level 4
+            cperl-close-paren-offset -4
+            cperl-continued-statement-offset 4
+            cperl-indent-parens-as-block t
+            cperl-tab-always-indent t
+            cperl-indent-subs-specially nil)
+      (defalias 'perl-mode 'cperl-mode))
+  #+END_SRC
+
+  custom =flycheck= checkers to work in carton environment
+  #+BEGIN_SRC emacs-lisp
+    (flycheck-define-checker my-perl
+      "A Perl syntax checker using the Perl interpreter."
+      :command ("/home/ben/perl5/perlbrew/perls/perl-5.24.0/bin/perl" "-w" "-c"
+                (eval (let ((options '()))
+                        (when (projectile-project-p)
+                          (push (concat "-I" (projectile-project-root)) options)
+                          (push (concat "-I" (projectile-expand-root "lib")) options)
+                          (when (projectile-verify-file "cpanfile")
+                            (push (concat "-I" (projectile-expand-root "local/lib/perl5")) options))
+                          options)))
+                source)
+      :error-patterns ((error line-start (minimal-match (message)) " at " (file-name) " line " line (or "." (and ", " (zero-or-more not-newline))) line-end))
+      :modes (perl-mode cperl-mode)
+      :next-checkers (my-perl-perlcritic))
+
+    (flycheck-define-checker my-perl-perlcritic
+      "A Perl syntax checker using Perl::Critic."
+      :command ("perlcritic" "--no-color" "--verbose" "%f:%l:%c:%s:%m (%e)\n"
+                (option "--severity" flycheck-perlcritic-verbosity flycheck-option-int)
+                source-original)
+      :error-patterns ((info    line-start (file-name) ":" line ":" column ":" (any "1")   ":" (message) line-end)
+                       (warning line-start (file-name) ":" line ":" column ":" (any "234") ":" (message) line-end)
+                       (error   line-start (file-name) ":" line ":" column ":" (any "5")   ":" (message) line-end))
+      :modes (cperl-mode perl-mode))
+
+    (add-to-list 'flycheck-checkers 'my-perl)
+    (add-to-list 'flycheck-checkers 'my-perl-perlcritic)
+
+    (defun my-cperl-mode-hook ()
+      "Hook function for `cperl-mode'."
+      (helm-perldoc:carton-setup)
+      (flycheck-select-checker 'my-perl))
+    (add-hook 'cperl-mode-hook 'my-cperl-mode-hook)
+  #+END_SRC
+
+  =helm= to browser perldoc
+  #+BEGIN_SRC emacs-lisp
+    (use-package helm-perldoc 
+      :ensure t)
+  #+END_SRC
+
+  Perl6 packages
+  #+BEGIN_SRC emacs-lisp
+    (use-package perl6-mode 
+      :ensure t)
+    (use-package flycheck-perl6
+      :ensure t)
+  #+END_SRC
+
+* Search and Replace
+  =anzu= provides nice visual help during replacing files
+  #+BEGIN_SRC emacs-lisp
+    (use-package anzu
+      :ensure t
+      :bind (:map isearch-mode-map
+                  ("M-q" . anzu-isearch-query-replace)
+                  ("M-l" . anzu-isearch-query-replace-regexp))
+      :config
+      (setq anzu-mode-lighter ""
+            anzu-deactivate-region t
+            anzu-search-threshold 1000
+            anzu-replace-threshold 50
+            anzu-replace-to-string-separator " => ")
+      (set-face-attribute 'anzu-mode-line nil
+                          :foreground "yellow" :weight 'bold)
+      (global-anzu-mode))
+  #+END_SRC
+
+  ag/the_silver_searcher standalone and with helm
+  #+BEGIN_SRC emacs-lisp
+    (use-package ag
+      :ensure t
+      :bind (("M-s" . ag)))
+
+    (use-package helm-ag
+      :ensure t
+      :bind ("M-p" . helm-projectile-ag))
+  #+END_SRC
+
+  =helm swoop= for searching through buffer/s
+  #+BEGIN_SRC emacs-lisp
+    (use-package helm-swoop
+      :ensure t
+      :bind (("M-o" . helm-swoop)
+             ("M-ö" . helm-swoop-multiline-4))
+             ("M-ü" . helm-multi-swoop-all))
+  #+END_SRC
+
+* LaTeX
+  Auctex as package for LaTeX
+  #+BEGIN_SRC emacs-lisp
+    ;(use-package auctex
+      ;:ensure t)
+  #+END_SRC
+
+  =company-auctex= for latex completion
+  #+BEGIN_SRC emacs-lisp
+    (use-package company-auctex
+      :ensure t
+      :config
+      (company-auctex-init))
+  #+END_SRC
+
+  Preview on the right side
+  #+BEGIN_SRC emacs-lisp
+    (use-package latex-preview-pane
+      :ensure t
+      :config
+      (latex-preview-pane-enable))
+  #+END_SRC
+
+  Hooks for minor modes of LaTeX
+  #+BEGIN_SRC emacs-lisp
+    (add-hook 'LaTeX-mode-hook 'visual-line-mode)
+    (add-hook 'LaTeX-mode-hook 'flyspell-mode)
+    (add-hook 'LaTeX-mode-hook 'LaTeX-math-mode)
+  #+END_SRC
+
+* C/C++
+  Basic offset of 4
+  #+BEGIN_SRC emacs-lisp
+    (setq c-basic-offset 4)
+  #+END_SRC
+
+  =irony-mode= for completion
+  #+BEGIN_SRC emacs-lisp
+    (use-package irony
+      :ensure t
+      :config
+      (add-hook 'c++-mode-hook 'irony-mode)
+      (add-hook 'c-mode-hook 'irony-mode)
+      (add-hook 'objc-mode-hook 'irony-mode))
+  #+END_SRC
+
+  =rtags= for jumping around in source code
+  #+BEGIN_SRC emacs-lisp
+    (use-package rtags
+      :ensure t
+      :bind (:map c-mode-base-map
+                  ("M-." . rtags-find-symbol-at-point)
+                  ("M-r" . rtags-find-references-at-point)))
+  #+END_SRC
+
+  =company-irony= as backend for company
+  #+BEGIN_SRC emacs-lisp
+    (use-package company-irony
+      :ensure t
+      :config
+      '(add-to-list 'company-backends 'company-irony))
+  #+END_SRC
+
+  Header file completion with =company-irony-c-headers=
+  #+BEGIN_SRC emacs-lisp
+    (use-package company-irony-c-headers
+      :ensure t
+      :config
+      '(add-to-list 'company-backends 'company-irony-c-headers))
+  #+END_SRC
+
+  Major mode for =CMakeLists.txt= files
+  #+BEGIN_SRC emacs-lisp
+    (use-package cmake-mode
+      :ensure t)
+  #+END_SRC
+
+  =cmake-ide= will take care of all includes and module setup
+  #+BEGIN_SRC emacs-lisp
+    (use-package cmake-ide
+      :ensure t
+      :config
+      (cmake-ide-setup))
+  #+END_SRC
+
+  If =cmake-ide= cannot find correct build dir, provide function to solve issue
+  #+BEGIN_SRC emacs-lisp
+    (defun set-cmake-ide-build-dir()
+      "Set build dir with CompileCommands.json"
+      (interactive)
+      (let ((dir (read-directory-name "Build dir:")))
+        (setq cmake-ide-build-dir dir)))
+  #+END_SRC
+
+  Use googles cpp lint checker
+  #+BEGIN_SRC emacs-lisp
+    (use-package flycheck-google-cpplint
+      :ensure t
+      :config
+      (setq flycheck-googlelint-verbose "3"
+            flycheck-googlelint-filter "-whitespace,+whitespace/braces"
+            flycheck-googlelint-root "/usr/bin/cpplint"
+            flycheck-googlelint-linelength "120"))
+  #+END_SRC
+
+
+  flycheck c++ standard
+  #+BEGIN_SRC emacs-lisp
+    (add-hook 'c++-mode-hook (lambda () (setq flycheck-gcc-language-standard "c++11")))
+    (add-hook 'c++-mode-hook (lambda () (setq flycheck-clang-language-standard "c++11")))
+  #+END_SRC
+
+* Python
+  =anaconda= for navigation and auto completion
+  #+BEGIN_SRC emacs-lisp
+    (use-package anaconda-mode
+      :ensure t
+      :config
+      (add-hook 'python-mode-hook 'anaconda-eldoc-mode)
+      (add-hook 'python-mode-hook 'anaconda-mode))
+  #+END_SRC
+
+  =company-anaconda= as backend for company
+  #+BEGIN_SRC emacs-lisp
+    (use-package company-anaconda
+      :ensure t
+      :config
+      (eval-after-load "company"
+        '(add-to-list 'company-backends 'company-anaconda)))
+  #+END_SRC
+
+  Use =python-mode= as major mode for python
+  #+BEGIN_SRC emacs-lisp
+    (use-package python-mode
+      :ensure t
+      :config
+      (add-hook 'python-mode-hook 'anaconda-mode)
+      (add-hook 'python-mode-hook 'anaconda-eldoc-mode)
+      (add-hook 'python-mode-hook
+                (lambda ()
+                  (setq-default indent-tabs-mode nil)
+                  (setq-default tab-width 4)
+                  (setq-default py-indent-tabs-mode t)
+                  (add-to-list 'write-file-functions 'delete-trailing-whitespace))))
+  #+END_SRC
+
+* Org
+  =org= wiht some defaults
+  #+BEGIN_SRC emacs-lisp
+  (use-package org
+    :ensure t
+    :bind (("C-c c" . org-capture))
+    :config
+    (setq org-src-fontify-natively t
+          org-src-tab-acts-natively t
+          org-src-tab-acts-natively)
+    (setq org-agenda-files '("~/.org"))
+    (setq org-reveal-root "file:///home/ben/src/reveal.js")
+    (setq org-default-notes-file (concat org-directory "~/.org/notes.org"))
+    (setq org-ellipsis "⤵")
+    (setq org-src-tab-acts-natively t)
+    (setq org-agenda-custom-commands
+          '(("c" . "My Custom Agendas")
+            ("cu" "Unscheduled TODO"
+             ((todo ""
+                    ((org-agenda-overriding-header "\nUnscheduled TODO")
+                     (org-agenda-skip-function '(org-agenda-skip-entry-if 'timestamp)))))
+             nil
+             nil)))
+    (setq org-capture-templates
+          '(("t" "Todo" entry (file+headline "~/.org/index.org" "Tasks")
+             "* TODO %?\n"))))
+  #+END_SRC
+
+  =ox-reveal= for html/js presentations
+  #+BEGIN_SRC emacs-lisp
+    (use-package ox-reveal
+      :ensure t)
+  #+END_SRC
+
+  Nice =org-bullets= instead of ugly stars
+  #+BEGIN_SRC emacs-lisp
+    (use-package org-bullets
+      :ensure t
+      :config
+      (org-bullets-mode t))
+  #+END_SRC
+
+* Git
+  =magit= for git integration
+  #+BEGIN_SRC emacs-lisp
+    (use-package magit
+      :ensure t
+      :bind (("C-x g" . magit-status))
+      :config
+      (defun my/magit-mode-hook ()
+        (company-mode -1))
+      (add-hook 'magit-mode-hook 'my/magit-mode-hook))
+  #+END_SRC
+
+* PDF
+  Docview default resolution is ugly
+  #+BEGIN_SRC emacs-lisp
+    (use-package doc-view
+      :ensure t
+      :config
+      (setq doc-view-resolution 144))
+  #+END_SRC
+
+* Multiple Cursors
+  #+BEGIN_SRC emacs-lisp
+    (use-package multiple-cursors
+      :ensure t
+      :bind (("M-SPC" . mc/mark-next-like-this)
+             ("M-S-SPC" . mc/mark-previous-like-this)
+             ("M-<return>" . mc/mark-all-like-this)))
+  #+END_SRC
+
+* Buffer Movement
+  Use =ace-window= to move into indexed buffer
+  #+BEGIN_SRC emacs-lisp
+    (use-package ace-window
+      :ensure t)
+  #+END_SRC
+
+* Additional Keybindings
+  Global Bindings
+  #+BEGIN_SRC emacs-lisp
+    (global-set-key (kbd "C-c k") 'kill-this-buffer)
+  #+END_SRC
