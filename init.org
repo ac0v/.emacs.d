@@ -217,6 +217,7 @@
             company-selection-wrap-around t
             company-transformers '(company-sort-by-occurrence
                                    company-sort-by-backend-importance))
+      (define-key company-mode-map (kbd "<tab>") 'company-indent-or-complete-common)
       (global-company-mode))
   #+END_SRC
 
@@ -232,24 +233,10 @@
        `(company-tooltip-common ((t (:inherit font-lock-constant-face))))))
   #+END_SRC
 
-  Complete or Indent with =<tab>=
-  #+BEGIN_SRC emacs-lisp
-    (defun complete-or-indent ()
-      (interactive)
-      (if (company-manual-begin)
-          (company-complete-common)
-        (indent-according-to-mode)))
-  #+END_SRC
-
   For snippets =yasnippet= with company backend.
   #+BEGIN_SRC emacs-lisp
     (use-package yasnippet
-      :ensure t
-      :config
-      (yas-global-mode 1))
-
-    ;(use-package company-yasnippet
-      ;:ensure t)
+      :ensure t)
   #+END_SRC
 
   Fuzzy complete
@@ -343,9 +330,6 @@
     (use-package web-mode
       :ensure t
       :defer t
-      :bind (:map web-mode-map
-                  ("C-c C-e" . web-mode-element-close)
-                  ("C-<tab>" . company-web-html))
       :config
       (setq-default web-mode-enable-auto-pairing t
                     web-mode-enable-auto-opening t
@@ -374,6 +358,7 @@
        '(web-mode-current-element-highlight-face
          ((t (:background "#000000"
                           :foreground "#FF8A4B")))))
+      (define-key helm-map (kbd "C-c C-e") 'web-mode-element-close)
       (add-hook 'web-mode-hook
                 '(lambda ()
                    (local-set-key (kbd "RET") 'newline-and-indent)
@@ -427,19 +412,15 @@
     (use-package cperl-mode
       :ensure t
       :bind (("C-c p" . perltidy-region)
-             ("C-c f" . perltidy-defun)
-             :map cperl-mode-map
-         ("C-m" . newline-and-indent)
-         ("C-c d" . helm-perldoc)
-         ("C-c h" . helm-perldoc:history))
+             ("C-c f" . perltidy-defun))
       :config
-      (setq cperl-indent-level 4
-            cperl-close-paren-offset -4
-            cperl-continued-statement-offset 4
-            cperl-indent-parens-as-block t
-            cperl-tab-always-indent t
-            cperl-indent-subs-specially nil)
-      (defalias 'perl-mode 'cperl-mode))
+    (setq
+        cperl-close-paren-offset -4
+        cperl-continued-statement-offset 4
+        cperl-indent-level 4
+        cperl-indent-parens-as-block t
+        cperl-tabs-always-indent t)
+    (defalias 'perl-mode 'cperl-mode))
   #+END_SRC
 
   custom =flycheck= checkers to work in carton environment
@@ -614,6 +595,7 @@
     (use-package cmake-ide
       :ensure t
       :config
+      (require 'rtags)
       (cmake-ide-setup))
   #+END_SRC
 
