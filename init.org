@@ -9,11 +9,11 @@
     (defun tangle-init ()
       "If the current buffer is 'init.org' the code-blocks are tangled, and the tangled file is compiled."
       (when (equal (buffer-file-name)
-		   (expand-file-name (concat user-emacs-directory "init.org")))
-	;; Avoid running hooks when tangling.
-	(let ((prog-mode-hook nil))
-	  (org-babel-tangle)
-	  (byte-compile-file (concat user-emacs-directory "init.el")))))
+                   (expand-file-name (concat user-emacs-directory "init.org")))
+        ;; Avoid running hooks when tangling.
+        (let ((prog-mode-hook nil))
+          (org-babel-tangle)
+          (byte-compile-file (concat user-emacs-directory "init.el")))))
      (add-hook 'after-save-hook 'tangle-init)
    #+END_SRC
 
@@ -217,7 +217,7 @@
             company-selection-wrap-around t
             company-transformers '(company-sort-by-occurrence
                                    company-sort-by-backend-importance))
-      (define-key company-mode-map (kbd "<tab>") 'company-indent-or-complete-common)
+      (define-key company-mode-map (kbd "C-M-i") 'company-indent-or-complete-common)
       (global-company-mode))
   #+END_SRC
 
@@ -663,29 +663,29 @@
 * Org
   =org= wiht some defaults
   #+BEGIN_SRC emacs-lisp
-  (use-package org
-    :ensure t
-    :bind (("C-c c" . org-capture))
-    :config
-    (setq org-src-fontify-natively t
-          org-src-tab-acts-natively t
-          org-src-tab-acts-natively)
-    (setq org-agenda-files '("~/.org"))
-    (setq org-reveal-root "file:///home/ben/src/reveal.js")
-    (setq org-default-notes-file (concat org-directory "~/.org/notes.org"))
-    (setq org-ellipsis "⤵")
-    (setq org-src-tab-acts-natively t)
-    (setq org-agenda-custom-commands
-          '(("c" . "My Custom Agendas")
-            ("cu" "Unscheduled TODO"
-             ((todo ""
-                    ((org-agenda-overriding-header "\nUnscheduled TODO")
-                     (org-agenda-skip-function '(org-agenda-skip-entry-if 'timestamp)))))
-             nil
-             nil)))
-    (setq org-capture-templates
-          '(("t" "Todo" entry (file+headline "~/.org/index.org" "Tasks")
-             "* TODO %?\n"))))
+    (use-package org
+      :ensure t
+      :bind (("C-c c" . org-capture))
+      :config
+      (setq org-src-fontify-natively t
+            org-src-tab-acts-natively t
+            org-src-tab-acts-natively)
+      (setq org-agenda-files '("~/.org"))
+      (setq org-reveal-root "file:///home/ben/src/reveal.js")
+      (setq org-default-notes-file (concat org-directory "~/.org/notes.org"))
+      (setq org-ellipsis "⤵")
+      (setq org-src-tab-acts-natively t)
+      (setq org-agenda-custom-commands
+            '(("c" . "My Custom Agendas")
+              ("cu" "Unscheduled TODO"
+               ((todo ""
+                      ((org-agenda-overriding-header "\nUnscheduled TODO")
+                       (org-agenda-skip-function '(org-agenda-skip-entry-if 'timestamp)))))
+               nil
+               nil)))
+      (setq org-capture-templates
+            '(("t" "Todo" entry (file+headline "~/.org/index.org" "Tasks")
+               "* TODO %?\n"))))
   #+END_SRC
 
   =ox-reveal= for html/js presentations
@@ -699,7 +699,7 @@
     (use-package org-bullets
       :ensure t
       :config
-      (org-bullets-mode t))
+      (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
   #+END_SRC
 
 * Git
@@ -707,11 +707,7 @@
   #+BEGIN_SRC emacs-lisp
     (use-package magit
       :ensure t
-      :bind (("C-x g" . magit-status))
-      :config
-      (defun my/magit-mode-hook ()
-        (company-mode -1))
-      (add-hook 'magit-mode-hook 'my/magit-mode-hook))
+      :bind (("C-x g" . magit-status)))
   #+END_SRC
 
 * PDF
