@@ -11,7 +11,5 @@ irony
 /init.org.backup
 /bookmarks
 /.mc-lists.el
-/anaconda-mode/0.1.2/anaconda_mode-0.1.2-py3.5.egg
-/anaconda
-/anaconda
 /init.el
+anaconda-mode
