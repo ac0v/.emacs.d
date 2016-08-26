@@ -13,3 +13,4 @@ irony
 /.mc-lists.el
 /init.el
 anaconda-mode
+/recentf
