@@ -179,39 +179,56 @@
       :ensure t)
   #+END_SRC
 
-* Helm - Awesome interface for nearly everything
-  Helm with some usefull defaults.
+* ivy - Awesome interface for nearly everything
+  ivy with some usefull defaults.
   #+BEGIN_SRC emacs-lisp
-    (use-package helm
-      :defer t
-      :ensure t
-      :bind (("C-c h" . helm-command-prefix)
-             ("M-x" . helm-M-x)
-             ("M-y" . helm-show-kill-ring)
-             ("C-x C-f" . helm-find-files))
+    (use-package ivy :ensure t
+      :diminish (ivy-mode . "")
       :config
-      (require 'helm-config)
-      (setq helm-split-window-in-side-p t            ; helm buffer in current buffer
-            helm-move-to-line-cycle-in-source t      ; to end or beginning when reaching end of src
-            helm-ff-search-library-in-sexp t         ; search for library in `require' and `declare-function' sexp.
-            helm-scroll-amount 8                     ; scroll 8 lines other window using M-<next>/M-<prior>
-            helm-ff-file-name-history-use-recentf t) ; search recent files
-      (setq helm-swoop-speed-or-color t)             ; syntax highlighting for swoop
-      (setq projectile-completion-system 'helm)      ; use helm for projectile
-      (helm-mode)
-      (helm-projectile-on)
-      ; helm-maps don't work in the bind section
-      (define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action)
-      (define-key helm-map (kbd "C-z" ) 'helm-select-action))
+      (ivy-mode 1)
+      ;; add ‘recentf-mode’ and bookmarks to ‘ivy-switch-buffer’.
+      (setq ivy-use-virtual-buffers t)
+      ;; number of result lines to display
+      (setq ivy-height 30)
+      ;; does not count candidates
+      (setq ivy-count-format "")
+      ;; no regexp by default
+      (setq ivy-initial-inputs-alist nil)
+      (setq magit-completing-read-function 'ivy-completing-read)
+      ;; configure regexp engine.
+      (setq ivy-re-builders-alist
+            ;; allow input not in order
+            '((t   . ivy--regex-ignore-order)))
+     (define-key ivy-mode-map (kbd "C-'") 'ivy-avy))
   #+END_SRC
 
-  Use =helm= interface with =projectile=
+  replacement for helm-swoop
   #+BEGIN_SRC emacs-lisp
-    (use-package helm-projectile
+    (use-package swiper
       :ensure t
       :config
-      (setq projectile-completion-system 'helm)
-      (helm-projectile-on))
+      :bind (("M-o" . swiper)))
+  #+END_SRC
+
+  use counsel as well
+  #+BEGIN_SRC emacs-lisp
+    (use-package counsel
+      :ensure t
+      :config
+      :bind (("C-c h" . counsel-descbinds)
+             ("M-x" . counsel-M-x)
+             ("M-y" . counsel-yank-pop)
+             ("C-c C-r" . counsel-recentf)
+             ("M-p" . counsel-ag)
+             ("C-x C-f" . counsel-find-file)))
+  #+END_SRC
+
+  let ivy interface with projectile
+  #+BEGIN_SRC emacs-lisp
+    (use-package counsel-projectile
+      :ensure t
+      :config
+      (counsel-projectile-on))
   #+END_SRC
 
 * Auto Completion
@@ -325,13 +342,6 @@
     (interactive)
     (mapc 'kill-buffer
 	  (delq (current-buffer) (buffer-list))))
-  #+END_SRC
-
-  Use =helm-swoop= over multiple lines
-  #+BEGIN_SRC emacs-lisp
-    (defun helm-swoop-multiline-4 ()
-      (interactive)
-      (helm-swoop :$query "" :$multiline 4))
   #+END_SRC
 
   Use perl tidy on regions and functions
@@ -540,19 +550,6 @@
     (use-package ag
       :ensure t
       :bind (("M-s" . ag)))
-
-    (use-package helm-ag
-      :ensure t
-      :bind ("M-p" . helm-projectile-ag))
-  #+END_SRC
-
-  =helm swoop= for searching through buffer/s
-  #+BEGIN_SRC emacs-lisp
-    (use-package helm-swoop
-      :ensure t
-      :bind (("M-o" . helm-swoop)
-             ("M-ö" . helm-swoop-multiline-4))
-             ("M-ü" . helm-multi-swoop-all))
   #+END_SRC
 
 * LaTeX
@@ -821,4 +818,8 @@
   Global Bindings
   #+BEGIN_SRC emacs-lisp
     (global-set-key (kbd "C-c k") 'kill-this-buffer)
+  #+END_SRC
+* Load Additional Files
+  #+BEGIN_SRC emacs-lisp
+    (load "~/.emacs.d/private.el")
   #+END_SRC
