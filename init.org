@@ -220,6 +220,7 @@
              ("M-y" . counsel-yank-pop)
              ("C-c C-r" . counsel-recentf)
              ("M-p" . counsel-ag)
+             ("C-c l" . counsel-locate)
              ("C-x C-f" . counsel-find-file)))
   #+END_SRC
 
@@ -612,7 +613,7 @@
     (use-package company-irony
       :ensure t
       :config
-      '(add-to-list 'company-backends 'company-irony))
+      (add-to-list 'company-backends 'company-irony))
   #+END_SRC
 
   Header file completion with =company-irony-c-headers=
@@ -726,9 +727,9 @@
               ("CANCELLED" :foreground "forest green" :weight bold)
               ("MEETING" :foreground "forest green" :weight bold)
               ("PHONE" :foreground "forest green" :weight bold))))
-      (setq org-src-fontify-natively t
-            org-src-tab-acts-natively t
-            org-src-tab-acts-natively)
+      (setq org-src-fontify-natively t)
+      (setq org-src-tab-acts-natively t)
+      (setq org-src-tab-acts-natively t)
       (setq org-agenda-files '("~/.org"))
       (setq org-reveal-root "file:///home/ben/src/reveal.js")
       (setq org-reveal-mathjax t)
@@ -765,6 +766,17 @@
       (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
   #+END_SRC
 
+  manage projects with =org-projectile=
+  #+BEGIN_SRC emacs-lisp
+    (use-package org-projectile
+      :ensure t
+      :bind (("C-c n p" . org-projectile:project-todo-completing-read))
+      :config
+      (org-projectile:per-repo)
+      (setq org-projectile:per-repo-filename "TODO.org")
+      (setq org-agenda-files (append org-agenda-files (org-projectile:todo-files)))
+      (global-set-key (kbd "C-c n p") 'org-projectile:project-todo-completing-read))
+  #+END_SRC
 * Git
   =magit= for git integration
   #+BEGIN_SRC emacs-lisp
@@ -818,8 +830,4 @@
   Global Bindings
   #+BEGIN_SRC emacs-lisp
     (global-set-key (kbd "C-c k") 'kill-this-buffer)
-  #+END_SRC
-* Load Additional Files
-  #+BEGIN_SRC emacs-lisp
-    (load "~/.emacs.d/private.el")
   #+END_SRC
