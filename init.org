@@ -184,14 +184,13 @@
   #+BEGIN_SRC emacs-lisp
     (use-package ivy :ensure t
       :diminish (ivy-mode . "")
+      :bind (("C-x b" . ivy-switch-buffer))
       :config
       (ivy-mode 1)
       ;; add ‘recentf-mode’ and bookmarks to ‘ivy-switch-buffer’.
-      (setq ivy-use-virtual-buffers t)
+      ;;(setq ivy-use-virtual-buffers t)
       ;; number of result lines to display
       (setq ivy-height 30)
-      ;; does not count candidates
-      (setq ivy-count-format "")
       ;; no regexp by default
       (setq ivy-initial-inputs-alist nil)
       (setq magit-completing-read-function 'ivy-completing-read)
@@ -208,6 +207,14 @@
       :ensure t
       :config
       :bind (("M-o" . swiper)))
+  #+END_SRC
+
+  smex for M-x ranking
+  #+BEGIN_SRC emacs-lisp
+    (use-package smex
+      :ensure t
+      :config 
+      (smex-initialize))
   #+END_SRC
 
   use counsel as well
@@ -621,7 +628,7 @@
     (use-package company-irony-c-headers
       :ensure t
       :config
-      '(add-to-list 'company-backends 'company-irony-c-headers))
+      (add-to-list 'company-backends 'company-irony-c-headers))
   #+END_SRC
 
   Major mode for =CMakeLists.txt= files
@@ -730,10 +737,10 @@
       (setq org-src-fontify-natively t)
       (setq org-src-tab-acts-natively t)
       (setq org-src-tab-acts-natively t)
-      (setq org-agenda-files '("~/.org"))
+      (setq org-agenda-files '("~/Dropbox/org"))
       (setq org-reveal-root "file:///home/ben/src/reveal.js")
       (setq org-reveal-mathjax t)
-      (setq org-default-notes-file (concat org-directory "~/.org/notes.org"))
+      (setq org-default-notes-file (concat org-directory "~/Dropbox/org/notes.org"))
       (setq org-ellipsis "⤵")
       (setq org-src-tab-acts-natively t)
       (setq org-agenda-custom-commands
@@ -745,7 +752,7 @@
                nil
                nil)))
       (setq org-capture-templates
-            '(("t" "Todo" entry (file+headline "~/.org/index.org" "Tasks")
+            '(("t" "Todo" entry (file+headline "~/Dropbox/org/index.org" "Tasks")
                "* TODO %?\n"))))
   #+END_SRC
 
@@ -830,6 +837,7 @@
   Global Bindings
   #+BEGIN_SRC emacs-lisp
     (global-set-key (kbd "C-c k") 'kill-this-buffer)
+    (global-set-key (kbd "C-x C-o") 'ff-find-other-file)
   #+END_SRC
 * Stack Exchange
   #+BEGIN_SRC emacs-lisp
