@@ -18,3 +18,4 @@ anaconda-mode
 .sx/
 private.el
 url/
+url/init.el
