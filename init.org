@@ -190,7 +190,7 @@
       :config
       (ivy-mode 1)
       ;; add ‘recentf-mode’ and bookmarks to ‘ivy-switch-buffer’.
-      ;;(setq ivy-use-virtual-buffers t)
+      (setq ivy-use-virtual-buffers t)
       ;; number of result lines to display
       (setq ivy-height 30)
       ;; no regexp by default
@@ -216,7 +216,8 @@
     (use-package smex
       :ensure t
       :config
-      (smex-initialize))
+      (smex-initialize)
+      (setq smex-completion-method 'ivy))
   #+END_SRC
 
   use counsel as well
@@ -864,6 +865,5 @@
 * Scala
   #+BEGIN_SRC emacs-lisp
     (use-package ensime
-      :ensure t
-      :pin melpa-stable)
+      :ensure t)
   #+END_SRC
