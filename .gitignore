@@ -19,3 +19,5 @@ anaconda-mode
 private.el
 url/
 url/init.el
+/smex-items
+init.el

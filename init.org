@@ -14,7 +14,7 @@
         (let ((prog-mode-hook nil))
           (org-babel-tangle)
           (byte-compile-file (concat user-emacs-directory "init.el")))))
-     (add-hook 'after-save-hook 'tangle-init)
+    (add-hook 'after-save-hook 'tangle-init)
    #+END_SRC
 
   Add =melpa= as source for getting packages
@@ -67,6 +67,8 @@
     (add-to-list 'auto-mode-alist '("\\.*tt2\\'" . web-mode))
     (add-to-list 'auto-mode-alist '("\\.nqp\\'" . perl6-mode))
     (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
+    (add-to-list 'auto-mode-alist '("\\.puml\\'" . puml-mode))
+    (add-to-list 'auto-mode-alist '("\\.plantuml\\'" . puml-mode))
   #+END_SRC
 
 * Convenience
@@ -213,7 +215,7 @@
   #+BEGIN_SRC emacs-lisp
     (use-package smex
       :ensure t
-      :config 
+      :config
       (smex-initialize))
   #+END_SRC
 
@@ -226,7 +228,7 @@
              ("M-x" . counsel-M-x)
              ("M-y" . counsel-yank-pop)
              ("C-c C-r" . counsel-recentf)
-             ("M-p" . counsel-ag)
+             ("M-p" . ag-project)
              ("C-c l" . counsel-locate)
              ("C-x C-f" . counsel-find-file)))
   #+END_SRC
@@ -248,7 +250,7 @@
       (setq company-idle-delay 0
             company-echo-delay 0
             company-dabbrev-downcase nil
-            company-minimum-prefix-length 2
+            company-minimum-prefix-length 3
             ompany-tooltip-limit 20
             company-selection-wrap-around t
             company-transformers '(company-sort-by-occurrence
@@ -438,7 +440,7 @@
       (add-to-list 'company-backends '(company-web-jade)))
   #+END_SRC
 
-* Javascript
+* Javascript/TypeSscript
   Use =js2-mode= as mojor mode for editing Javascript
   #+BEGIN_SRC emacs-lisp
     (use-package js2-mode
@@ -449,16 +451,18 @@
   #+BEGIN_SRC emacs-lisp
     (use-package tern
       :ensure t)
-  #+END_SRC
-
-  =company-tern= for auto complete
-  #+BEGIN_SRC emacs-lisp
     (use-package company-tern
       :ensure t
       :config
       (add-to-list 'company-backends '(company-tern)))
   #+END_SRC
 
+  #+BEGIN_SRC emacs-lisp
+    (use-package tide
+      :ensure t
+      :config)
+      ;(tide-setup))
+  #+END_SRC
 * PHP
   use =php-mode=
   #+BEGIN_SRC emacs-lisp
@@ -474,6 +478,9 @@
       :bind (("C-c p" . perltidy-region)
              ("C-c f" . perltidy-defun))
       :config
+    (custom-set-faces
+     '(cperl-hash-face  ((t)))
+     '(cperl-array-face ((t))))
     (setq
         cperl-close-paren-offset -4
         cperl-continued-statement-offset 4
@@ -596,7 +603,19 @@
     (setq c-basic-offset 4)
   #+END_SRC
 
-  =irony-mode= for completion
+  =rtags= for jumping around in source code
+  #+BEGIN_SRC emacs-lisp
+    (use-package rtags
+      :ensure t
+      :bind (:map c-mode-base-map
+                  ("M-." . rtags-find-symbol-at-point)
+                  ("M-r" . rtags-find-references-at-point)
+                  ("C-c o" . rtags-rename-symbol))
+      :config)
+      ;(add-to-list 'company-backends 'company-rtags))
+  #+END_SRC
+
+  =irony= for completion
   #+BEGIN_SRC emacs-lisp
     (use-package irony
       :ensure t
@@ -604,31 +623,12 @@
       (add-hook 'c++-mode-hook 'irony-mode)
       (add-hook 'c-mode-hook 'irony-mode)
       (add-hook 'objc-mode-hook 'irony-mode))
-  #+END_SRC
 
-  =rtags= for jumping around in source code
-  #+BEGIN_SRC emacs-lisp
-    (use-package rtags
-      :ensure t
-      :bind (:map c-mode-base-map
-                  ("M-." . rtags-find-symbol-at-point)
-                  ("M-r" . rtags-find-references-at-point)))
-  #+END_SRC
-
-  =company-irony= as backend for company
-  #+BEGIN_SRC emacs-lisp
     (use-package company-irony
       :ensure t
       :config
+      (setq company-backends (delete 'company-dabbrev company-backends))
       (add-to-list 'company-backends 'company-irony))
-  #+END_SRC
-
-  Header file completion with =company-irony-c-headers=
-  #+BEGIN_SRC emacs-lisp
-    (use-package company-irony-c-headers
-      :ensure t
-      :config
-      (add-to-list 'company-backends 'company-irony-c-headers))
   #+END_SRC
 
   Major mode for =CMakeLists.txt= files
@@ -669,7 +669,6 @@
 
   flycheck c++ standard
   #+BEGIN_SRC emacs-lisp
-    (add-hook 'c++-mode-hook (lambda () (setq flycheck-gcc-language-standard "c++11")))
     (add-hook 'c++-mode-hook (lambda () (setq flycheck-clang-language-standard "c++11")))
   #+END_SRC
 
@@ -829,7 +828,7 @@
   #+BEGIN_SRC emacs-lisp
     (use-package calfw
       :ensure t
-      :config 
+      :config
       (require 'calfw-org)
       (require 'calfw-ical))
   #+END_SRC
@@ -853,4 +852,17 @@
                  ("u" . sx-tab-unanswered-my-tags)
                  ("a" . sx-ask)
                  ("s" . sx-search)))
+  #+END_SRC
+* Google Translate
+  #+BEGIN_SRC emacs-lisp
+    (use-package google-translate
+      :ensure t
+      :config
+      (global-set-key (kbd "C-c t") 'google-translate-at-point)
+      (global-set-key (kbd "C-c T") 'google-translate-query-translate))
+  #+END_SRC
+* Scala
+  #+BEGIN_SRC emacs-lisp
+    (use-package scala-mode
+      :ensure t)
   #+END_SRC
