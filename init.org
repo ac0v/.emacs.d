@@ -863,6 +863,7 @@
   #+END_SRC
 * Scala
   #+BEGIN_SRC emacs-lisp
-    (use-package scala-mode
-      :ensure t)
+    (use-package ensime
+      :ensure t
+      :pin melpa-stable)
   #+END_SRC
