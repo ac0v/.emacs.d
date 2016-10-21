@@ -39,6 +39,11 @@
     (server-start)
   #+END_SRC
 
+  extern modules not yet on melpa
+  #+BEGIN_SRC emacs-lisp
+    (add-to-list 'load-path "/home/ben/.emacs.d/extern")
+  #+END_SRC
+
 * File-to-Mode mapping
   Define via filename or extension the major mode for editing
   #+BEGIN_SRC emacs-lisp
@@ -166,7 +171,7 @@
     (use-package projectile
       :ensure t
       :config
-      (projectile-global-mode))
+      (projectile-mode 1))
   #+END_SRC
 
   Project explorer, rarely used
@@ -368,6 +373,16 @@
       (interactive)
       (save-excursion (mark-defun)
                       (perltidy-region)))
+  #+END_SRC
+
+  some other usefull functions
+  #+BEGIN_SRC emacs-lisp
+    (defun perl-path-to-namespace()
+      (interactive)
+      (replace-regexp-in-string
+       "^::\\|.pm$" "" (replace-regexp-in-string
+                  "/" "::" (replace-regexp-in-string
+                            (expand-file-name "lib" (projectile-project-root)) "" buffer-file-name))))
   #+END_SRC
 
 * Web Development
@@ -784,6 +799,16 @@
       (setq org-agenda-files (append org-agenda-files (org-projectile:todo-files)))
       (global-set-key (kbd "C-c n p") 'org-projectile:project-todo-completing-read))
   #+END_SRC
+
+  nice reminder
+  #+BEGIN_SRC emacs-lisp
+    (use-package secretaria
+       :ensure t
+       :config
+       ;; use this for getting a reminder every 30 minutes of those tasks scheduled
+       ;; for today and which have no time of day defined.
+       (add-hook 'after-init-hook #'secretaria-today-unknown-time-appt-always-remind-me))
+  #+END_SRC
 * Git
   =magit= for git integration
   #+BEGIN_SRC emacs-lisp
@@ -862,8 +887,27 @@
       (global-set-key (kbd "C-c t") 'google-translate-at-point)
       (global-set-key (kbd "C-c T") 'google-translate-query-translate))
   #+END_SRC
+* Images
+  for images resizing
+  #+BEGIN_SRC emacs-lisp
+    (use-package image-file
+      :init (auto-image-file-mode))
+  #+END_SRC
 * Scala
   #+BEGIN_SRC emacs-lisp
+    (use-package sbt-mode
+      :ensure t)
+    (use-package scala-mode
+      :ensure t)
     (use-package ensime
       :ensure t)
   #+END_SRC
+* YAML
+  #+BEGIN_SRC emacs-lisp
+    (use-package yaml-mode
+      :ensure t)
+  #+END_SRC
+* Abrev
+  #+BEGIN_SRC emacs-lisp
+    (setq abbrev-file-name "~/.emacs.d/.abbrev")
+  #+END_SRC emacs-lisp
