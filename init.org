@@ -489,6 +489,7 @@
 * Perl/Perl6
   =cperl-mode= prefered to =perl-mode=
   #+BEGIN_SRC emacs-lisp
+    (defalias 'perl-mode 'cperl-mode)
     (use-package cperl-mode
       :ensure t
       :bind (("C-c p" . perltidy-region)
