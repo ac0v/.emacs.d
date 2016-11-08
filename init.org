@@ -92,7 +92,7 @@
 
   Only tabs
   #+BEGIN_SRC emacs-lisp
-    (setq indent-tabs-mode nil)
+    (setq-default indent-tabs-mode nil)
   #+END_SRC
 
   Some usefull defaults
@@ -496,8 +496,8 @@
         cperl-close-paren-offset -4
         cperl-continued-statement-offset 4
         cperl-indent-level 4
-        cperl-indent-parens-as-block t
-        cperl-tabs-always-indent t)
+        cperl-tab-always-indent nil
+        cperl-indent-parens-as-block t)
     (defalias 'perl-mode 'cperl-mode))
   #+END_SRC
 
