@@ -39,11 +39,6 @@
     (server-start)
   #+END_SRC
 
-  extern modules not yet on melpa
-  #+BEGIN_SRC emacs-lisp
-    (add-to-list 'load-path "/home/ben/.emacs.d/extern")
-  #+END_SRC
-
 * File-to-Mode mapping
   Define via filename or extension the major mode for editing
   #+BEGIN_SRC emacs-lisp
@@ -753,7 +748,6 @@
       (setq org-src-fontify-natively t)
       (setq org-src-tab-acts-natively t)
       (setq org-src-tab-acts-natively t)
-      (setq org-agenda-files '("~/Dropbox/org"))
       (setq org-reveal-root "file:///home/ben/src/reveal.js")
       (setq org-reveal-mathjax t)
       (setq org-default-notes-file (concat org-directory "~/Dropbox/org/notes.org"))
@@ -911,4 +905,8 @@
 * Abrev
   #+BEGIN_SRC emacs-lisp
     (setq abbrev-file-name "~/.emacs.d/.abbrev")
-  #+END_SRC emacs-lisp
+  #+END_SRC
+* Load private file
+  #+BEGIN_SRC emacs-lisp
+    (load-file "~/.emacs.d/private.el")
+  #+END_SRC
