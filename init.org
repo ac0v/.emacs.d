@@ -38,7 +38,6 @@
   #+BEGIN_SRC emacs-lisp
     (server-start)
   #+END_SRC
-
 * File-to-Mode mapping
   Define via filename or extension the major mode for editing
   #+BEGIN_SRC emacs-lisp
@@ -266,7 +265,7 @@
       :ensure t
       :config
       ;(add-hook 'after-init-hook #'global-ycmd-mode)
-      (set-variable 'ycmd-server-command '("python" "/home/ben/src/ycmd/ycmd/__main__.py")))
+      (set-variable 'ycmd-server-command '("python" "~/src/ycmd/ycmd/__main__.py")))
       ;(setq request-message-level -1)) ; QUIET!
       ;(require 'ycmd-eldoc)
       ;(add-hook 'ycmd-mode-hook 'ycmd-eldoc-setup))
@@ -506,7 +505,7 @@
   #+BEGIN_SRC emacs-lisp
     (flycheck-define-checker my-perl
       "A Perl syntax checker using the Perl interpreter."
-      :command ("/home/ben/perl5/perlbrew/perls/perl-5.24.0/bin/perl" "-w" "-c"
+      :command ("~/perl5/perlbrew/perls/perl-5.24.0/bin/perl" "-w" "-c"
                 (eval (let ((options '()))
                         (when (projectile-project-p)
                           (push (concat "-I" (projectile-project-root)) options)
@@ -748,7 +747,8 @@
       (setq org-src-fontify-natively t)
       (setq org-src-tab-acts-natively t)
       (setq org-src-tab-acts-natively t)
-      (setq org-reveal-root "file:///home/ben/src/reveal.js")
+      (setq org-agenda-files '("~/Dropbox/org"))
+      (setq org-reveal-root (concat "file://" (getenv "HOME") "/src/reveal.js"))
       (setq org-reveal-mathjax t)
       (setq org-default-notes-file (concat org-directory "~/Dropbox/org/notes.org"))
       (setq org-ellipsis "⤵")
