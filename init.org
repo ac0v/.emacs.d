@@ -579,7 +579,7 @@
   #+BEGIN_SRC emacs-lisp
     (use-package ag
       :ensure t
-      :bind (("M-s" . ag)))
+      :bind (("M-s" . counsel-projectile-ag)))
   #+END_SRC
 
 * LaTeX
