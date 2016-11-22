@@ -500,7 +500,7 @@
         cperl-close-paren-offset -4
         cperl-continued-statement-offset 4
         cperl-indent-level 4
-        cperl-tab-always-indent nil
+        cperl-tab-always-indent t
         cperl-indent-parens-as-block t)
     (defalias 'perl-mode 'cperl-mode))
   #+END_SRC
