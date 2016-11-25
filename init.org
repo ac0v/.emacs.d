@@ -379,8 +379,27 @@
       (interactive)
       (replace-regexp-in-string
        "^::\\|.pm$" "" (replace-regexp-in-string
-                  "/" "::" (replace-regexp-in-string
-                            (expand-file-name "lib" (projectile-project-root)) "" buffer-file-name))))
+                        "/" "::" (replace-regexp-in-string
+                                  (expand-file-name "lib" (projectile-project-root)) "" buffer-file-name))))
+
+    (defun toggle-maximize-buffer () "Maximize buffer"
+           (interactive)
+           (if (= 1 (length (window-list)))
+               (jump-to-register '_)
+             (progn
+               (set-register '_ (list (current-window-configuration)))
+               (delete-other-windows))))
+
+    (defun random-sort-lines (beg end) "Sort lines in region randomly."
+      (interactive "r")
+      (save-excursion
+        (save-restriction
+          (narrow-to-region beg end)
+          (goto-char (point-min))
+          (let ;; To make `end-of-line' and etc. to ignore fields.
+              ((inhibit-field-text-motion t))
+            (sort-subr nil 'forward-line 'end-of-line nil nil
+                       (lambda (s1 s2) (eq (random 2) 0)))))))
   #+END_SRC
 
 * Web Development
@@ -862,6 +881,7 @@
   #+BEGIN_SRC emacs-lisp
     (global-set-key (kbd "C-c k") 'kill-this-buffer)
     (global-set-key (kbd "C-x C-o") 'ff-find-other-file)
+    (global-set-key (kbd "s-m") 'toggle-maximize-buffer)
   #+END_SRC
 * Stack Exchange
   #+BEGIN_SRC emacs-lisp
