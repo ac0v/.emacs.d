@@ -934,3 +934,8 @@
   #+BEGIN_SRC emacs-lisp
     (load-file "~/.emacs.d/private.el")
   #+END_SRC
+* upgrade packages
+  #+BEGIN_SRC emacs-lisp
+    (use-package package-utils
+      :ensure t)
+  #+END_SRC
