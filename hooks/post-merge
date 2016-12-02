@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+changed_files = "$(git diff-tree -r --name-only --no-commit-id ORIG_HEAD HEAD)"
+
+if [ echo "$changed_files" | grep --quiet "init.org" ]
+then
+    emacs -batch \
+      --eval="(package-initialize)" \
+      --eval="(require 'use-package)" \
+      --eval="(require 'org)" \
+      --eval='(org-babel-tangle-file (concat user-emacs-directory "init.org") (concat user-emacs-directory "init.el"))' \
+      --eval='(byte-compile-file (concat user-emacs-directory "init.el"))';
+fi
