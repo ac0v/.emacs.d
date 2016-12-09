@@ -785,7 +785,7 @@
                nil
                nil)))
       (setq org-capture-templates
-            '(("t" "Todo" entry (file+headline "~/Dropbox/org/index.org" "Tasks")
+            '(("t" "Todo" entry (file+headline "~/Dropbox/org/index.org" "New Tasks")
                "* TODO %?\n"))))
   #+END_SRC
 
@@ -809,13 +809,14 @@
   manage projects with =org-projectile=
   #+BEGIN_SRC emacs-lisp
     (use-package org-projectile
-      :ensure t
-      :bind (("C-c n p" . org-projectile:project-todo-completing-read))
+      :bind (("C-c n p" . org-projectile:project-todo-completing-read)
+             ("C-c c" . org-capture))
       :config
-      (org-projectile:per-repo)
-      (setq org-projectile:per-repo-filename "TODO.org")
-      (setq org-agenda-files (append org-agenda-files (org-projectile:todo-files)))
-      (global-set-key (kbd "C-c n p") 'org-projectile:project-todo-completing-read))
+      (progn
+        (setq org-projectile:projects-file "~/Dropbox/org/projects.org")
+        (setq org-agenda-files (append org-agenda-files (org-projectile:todo-files)))
+        (add-to-list 'org-capture-templates (org-projectile:project-todo-entry "p")))
+      :ensure t)
   #+END_SRC
 
   nice reminder
@@ -917,7 +918,9 @@
     (use-package sbt-mode
       :ensure t)
     (use-package scala-mode
-      :ensure t)
+      :ensure t
+      :config
+      (setq scala-indent:step 4))
     (use-package ensime
       :ensure t)
   #+END_SRC
