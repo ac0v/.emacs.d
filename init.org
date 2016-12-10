@@ -734,10 +734,7 @@
       (add-hook 'python-mode-hook 'anaconda-eldoc-mode)
       (add-hook 'python-mode-hook
                 (lambda ()
-                  (setq-default indent-tabs-mode nil)
-                  (setq-default tab-width 4)
-                  (setq-default py-indent-tabs-mode t)
-                  (add-to-list 'write-file-functions 'delete-trailing-whitespace))))
+                  (setq-default tab-width 4))))
   #+END_SRC
 
 * Go
@@ -812,11 +809,8 @@
       :bind (("C-c n p" . org-projectile:project-todo-completing-read)
              ("C-c c" . org-capture))
       :config
-      (progn
-        (setq org-projectile:projects-file "~/Dropbox/org/projects.org")
-        (setq org-agenda-files (append org-agenda-files (org-projectile:todo-files)))
-        (add-to-list 'org-capture-templates (org-projectile:project-todo-entry "p")))
       :ensure t)
+
   #+END_SRC
 
   nice reminder
@@ -826,7 +820,7 @@
        :config
        ;; use this for getting a reminder every 30 minutes of those tasks scheduled
        ;; for today and which have no time of day defined.
-       (add-hook 'after-init-hook #'secretaria-today-unknown-time-appt-always-remind-me))
+       (progn (add-hook 'after-init-hook #'secretaria-today-unknown-time-appt-always-remind-me)))
   #+END_SRC
 * Git
   =magit= for git integration
