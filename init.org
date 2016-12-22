@@ -936,3 +936,16 @@
     (use-package package-utils
       :ensure t)
   #+END_SRC
+* multimedia
+  #+BEGIN_SRC emacs-lisp
+    (use-package emms
+      :ensure t
+      :config
+      (emms-standard)
+      (emms-default-players))
+  #+END_SRC
+* debuggin
+  #+BEGIN_SRC emacs-lisp
+    (use-package realgud
+      :ensure t)
+  #+END_SRC

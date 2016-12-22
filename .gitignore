@@ -1,3 +1,4 @@
+emms/
 elpa
 snippets
 init.elc
@@ -22,3 +23,5 @@ url/init.el
 /smex-items
 init.el
 /eshell/lastdir
+/.org-id-locations
+/project-to-org-filepath
