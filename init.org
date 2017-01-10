@@ -245,6 +245,15 @@
       (counsel-projectile-on))
   #+END_SRC
 
+  #+BEGIN_SRC emacs-lisp
+    (use-package ivy-rich
+      :ensure t
+      :config
+      (ivy-set-display-transformer 'ivy-switch-buffer 'ivy-rich-switch-buffer-transformer)
+      (setq ivy-virtual-abbreviate 'full
+      ivy-rich-switch-buffer-align-virtual-buffer t))
+  #+END_SRC
+
 * Auto Completion
   Complete-Anything!
   #+BEGIN_SRC emacs-lisp
@@ -815,12 +824,11 @@
 
   nice reminder
   #+BEGIN_SRC emacs-lisp
-    (use-package secretaria
-       :ensure t
-       :config
-       ;; use this for getting a reminder every 30 minutes of those tasks scheduled
-       ;; for today and which have no time of day defined.
-       (progn (add-hook 'after-init-hook #'secretaria-today-unknown-time-appt-always-remind-me)))
+    (use-package org-alert
+      :ensure t
+      :config
+      (setq org-alert-interval 1800)
+      (setq alert-default-style 'libnotify))
   #+END_SRC
 * Git
   =magit= for git integration
@@ -948,4 +956,65 @@
   #+BEGIN_SRC emacs-lisp
     (use-package realgud
       :ensure t)
+  #+END_SRC
+* run current buffer
+  #+BEGIN_SRC emacs-lisp
+    (defun xah-run-current-file ()
+      (interactive)
+      (let (
+            (-suffix-map
+             ;; (‹extension› . ‹shell program name›)
+             `(
+               ("php" . "php")
+               ("pl6" . "perl6")
+               ("pl" . "/home/ben/perl5/perlbrew/perls/perl-5.24.0/bin/perl")
+               ("pm" . "/home/ben/perl5/perlbrew/perls/perl-5.24.0/bin/perl")
+               ("py" . "python3")
+               ("rb" . "ruby")
+               ("go" . "go run")
+               ("js" . "node") ; node.js
+               ("sh" . "bash")
+               ("clj" . "java -cp /home/xah/apps/clojure-1.6.0/clojure-1.6.0.jar clojure.main")
+               ("rkt" . "racket")
+               ("ml" . "ocaml")
+               ("vbs" . "cscript")
+               ("tex" . "pdflatex")
+               ("latex" . "pdflatex")
+               ("java" . "javac")
+               ;; ("pov" . "/usr/local/bin/povray +R2 +A0.1 +J1.2 +Am2 +Q9 +H480 +W640")
+               ))
+
+            -fname
+            -fSuffix
+            -prog-name
+            -cmd-str)
+
+        (when (null (buffer-file-name)) (save-buffer))
+        (when (buffer-modified-p) (save-buffer))
+
+        (setq -fname (buffer-file-name))
+        (setq -fSuffix (file-name-extension -fname))
+        (setq -prog-name (cdr (assoc -fSuffix -suffix-map)))
+        (setq -cmd-str (concat -prog-name " \""   -fname "\""))
+
+        (cond
+         ((string-equal -fSuffix "el") (load -fname))
+         ((string-equal -fSuffix "java")
+          (progn
+            (shell-command -cmd-str "*xah-run-current-file output*" )
+            (shell-command
+             (format "java %s" (file-name-sans-extension (file-name-nondirectory -fname))))))
+         (t (if -prog-name
+                (progn
+                  (message "Running…")
+                  (shell-command -cmd-str "*xah-run-current-file output*" ))
+              (message "No recognized program file suffix for this file."))))))
+    (global-set-key (kbd "<f5>") 'xah-run-current-file)
+  #+END_SRC
+* undo
+  #+BEGIN_SRC elisp
+    (use-package undo-tree
+      :ensure t
+      :config
+      (global-undo-tree-mode))
   #+END_SRC
