@@ -304,7 +304,9 @@
   For snippets =yasnippet= with company backend.
   #+BEGIN_SRC emacs-lisp
     (use-package yasnippet
-      :ensure t)
+      :ensure t
+      :config
+      (yas-global-mode 1))
   #+END_SRC
 
   Fuzzy complete
