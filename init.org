@@ -654,7 +654,9 @@
                   ("M-." . rtags-find-symbol-at-point)
                   ("M-r" . rtags-find-references-at-point)
                   ("C-c o" . rtags-rename-symbol))
-      :config)
+      :config
+      (require 'flycheck-rtags)
+      (push 'company-rtags company-backends))
       ;(add-to-list 'company-backends 'company-rtags))
   #+END_SRC
 
