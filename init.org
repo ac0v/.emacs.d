@@ -38,6 +38,81 @@
   #+BEGIN_SRC emacs-lisp
     (server-start)
   #+END_SRC
+* evil
+  #+BEGIN_SRC emacs-lisp
+    (use-package evil
+      :ensure t
+      :config
+      (define-key evil-normal-state-map (kbd "C-u") 'evil-scroll-up)
+      (evil-mode 1))
+
+    (use-package evil-escape
+      :ensure t
+      :config
+      (setq-default evil-escape-key-sequence "fd")
+      (setq-default evil-escape-delay 0.2)
+      (evil-escape-mode))
+
+    (use-package evil-leader
+      :ensure t
+      :config
+      (global-evil-leader-mode)
+      (evil-leader/set-leader "<SPC>")
+      (evil-leader/set-key-for-mode 'org-mode "r" 'org-toggle-latex-fragment)
+      (evil-leader/set-key-for-mode 'org-mode "s" 'org-schedule)
+      (evil-leader/set-key
+        "sh" 'split-window-below
+        "sv" 'split-window-right
+        "ms" 'magit-status
+        "ml" 'magit-log
+        "mb" 'magit-log-buffer-file
+        "ci" 'evilnc-comment-or-uncomment-lines
+        "cl" 'evilnc-quick-comment-or-uncomment-to-the-line
+        "ll" 'evilnc-quick-comment-or-uncomment-to-the-line
+        "cc" 'evilnc-copy-and-comment-lines
+        "cp" 'evilnc-comment-or-uncomment-paragraphs
+        "cr" 'comment-or-uncomment-region
+        "cv" 'evilnc-toggle-invert-comment-line-by-line
+        "\\" 'evilnc-comment-operator
+        "pf" 'projectile-find-file
+        "pp" 'projectile-switch-project
+        "ps" 'ag-project
+        "pa" 'projectile-ag
+        "oa" 'org-agenda
+        "oc" 'org-capture
+        "k"  'kill-this-buffer
+        "e" 'find-file
+        "b" 'switch-to-buffer))
+
+    (use-package org-evil
+      :ensure t
+      :config
+      (define-key org-agenda-mode-map "j" 'evil-next-line)
+      (define-key org-agenda-mode-map "k" 'evil-previous-line))
+
+    (use-package evil-surround
+      :ensure t
+      :config
+      (global-evil-surround-mode 1))
+
+    (use-package evil-nerd-commenter
+      :ensure t
+      :config
+      (evilnc-default-hotkeys))
+
+    (use-package evil-magit
+      :ensure t)
+
+    (use-package evil-snipe
+      :ensure t
+      :config
+      (evil-snipe-mode 1)
+      (setq evil-snipe-scope 'whole-visible)
+      (add-hook 'magit-mode-hook 'turn-off-evil-snipe-override-mode))
+
+    (use-package evil-cleverparens
+      :ensure t)
+  #+END_SRC
 * File-to-Mode mapping
   Define via filename or extension the major mode for editing
   #+BEGIN_SRC emacs-lisp
@@ -145,14 +220,6 @@
       :ensure t
       :config
       (load-theme 'atom-dark 'NO-CONFIRM))
-  #+END_SRC
-
-  Nice bottom-bar
-  #+BEGIN_SRC emacs-lisp
-  (use-package telephone-line
-    :ensure t
-    :config
-    (telephone-line-mode 1))
   #+END_SRC
 
   Mark matching brackets
@@ -272,23 +339,6 @@
       (global-company-mode))
   #+END_SRC
 
-  ycmd - youcompleteme
-  #+BEGIN_SRC emacs-lisp
-    (use-package ycmd
-      :ensure t
-      :config
-      ;(add-hook 'after-init-hook #'global-ycmd-mode)
-      (set-variable 'ycmd-server-command '("python" "~/src/ycmd/ycmd/__main__.py")))
-      ;(setq request-message-level -1)) ; QUIET!
-      ;(require 'ycmd-eldoc)
-      ;(add-hook 'ycmd-mode-hook 'ycmd-eldoc-setup))
-
-    (use-package company-ycmd
-      :ensure t
-      :config)
-      ;(company-ycmd-setup))
-  #+END_SRC
-
   Fit completion popup to theme
   #+BEGIN_SRC emacs-lisp
     (require 'color)
@@ -325,12 +375,6 @@
       :config
       (global-flycheck-mode))
 
-    (use-package flycheck-ycmd
-      :ensure t
-      :config
-      ;(flycheck-ycmd-setup)
-      (when (not (display-graphic-p))
-        (setq flycheck-indication-mode nil)))
   #+END_SRC
 
   =flyspell= as spell checker interace together
@@ -484,7 +528,7 @@
       (add-to-list 'company-backends '(company-web-jade)))
   #+END_SRC
 
-* Javascript/TypeSscript
+* Javascript/TypeScript
   Use =js2-mode= as mojor mode for editing Javascript
   #+BEGIN_SRC emacs-lisp
     (use-package js2-mode
@@ -599,7 +643,7 @@
             anzu-replace-to-string-separator " => ")
       (set-face-attribute 'anzu-mode-line nil
                           :foreground "yellow" :weight 'bold)
-      (global-anzu-mode +1)
+      ;(global-anzu-mode +1)
       (global-set-key (kbd "C-c q") 'anzu-query-replace)
       (global-set-key (kbd "C-c r") 'anzu-query-replace-regexp))
 
@@ -652,14 +696,11 @@
   #+BEGIN_SRC emacs-lisp
     (use-package rtags
       :ensure t
-      :bind (:map c-mode-base-map
-                  ("M-." . rtags-find-symbol-at-point)
-                  ("M-r" . rtags-find-references-at-point)
-                  ("C-c o" . rtags-rename-symbol))
       :config
-      (require 'flycheck-rtags)
-      (push 'company-rtags company-backends))
-      ;(add-to-list 'company-backends 'company-rtags))
+      (evil-define-key 'normal c-mode-map (kbd "g d") 'rtags-find-symbol-at-point)
+      (evil-define-key 'normal c++-mode-map (kbd "g d") 'rtags-find-symbol-at-point)
+      (evil-leader/set-key-for-mode 'c++-mode "r" 'rtags-rename-symbol)
+      (evil-leader/set-key-for-mode 'c++-mode "a" 'rtags-find-references-at-point))
   #+END_SRC
 
   =irony= for completion
@@ -674,7 +715,6 @@
     (use-package company-irony
       :ensure t
       :config
-      (setq company-backends (delete 'company-dabbrev company-backends))
       (add-to-list 'company-backends 'company-irony))
   #+END_SRC
 
@@ -691,6 +731,12 @@
       :config
       (require 'rtags)
       (cmake-ide-setup))
+  #+END_SRC
+
+  =malinka= for c/c++ projects
+  #+BEGIN_SRC emacs-lisp
+    ;; (use-package malinka
+    ;;   :ensure t)
   #+END_SRC
 
   If =cmake-ide= cannot find correct build dir, provide function to solve issue
@@ -905,21 +951,6 @@
     (global-set-key (kbd "C-x C-o") 'ff-find-other-file)
     (global-set-key (kbd "s-m") 'toggle-maximize-buffer)
   #+END_SRC
-* Stack Exchange
-  #+BEGIN_SRC emacs-lisp
-    (use-package sx
-      :ensure t
-      :config
-      (bind-keys :prefix "C-c s"
-                 :prefix-map my-sx-map
-                 :prefix-docstring "Global keymap for SX."
-                 ("q" . sx-tab-all-questions)
-                 ("i" . sx-inbox)
-                 ("o" . sx-open-link)
-                 ("u" . sx-tab-unanswered-my-tags)
-                 ("a" . sx-ask)
-                 ("s" . sx-search)))
-  #+END_SRC
 * Google Translate
   #+BEGIN_SRC emacs-lisp
     (use-package google-translate
@@ -961,19 +992,6 @@
 * upgrade packages
   #+BEGIN_SRC emacs-lisp
     (use-package package-utils
-      :ensure t)
-  #+END_SRC
-* multimedia
-  #+BEGIN_SRC emacs-lisp
-    (use-package emms
-      :ensure t
-      :config
-      (emms-standard)
-      (emms-default-players))
-  #+END_SRC
-* debuggin
-  #+BEGIN_SRC emacs-lisp
-    (use-package realgud
       :ensure t)
   #+END_SRC
 * run current buffer
@@ -1030,30 +1048,8 @@
               (message "No recognized program file suffix for this file."))))))
     (global-set-key (kbd "<f5>") 'xah-run-current-file)
   #+END_SRC
-* undo
-  #+BEGIN_SRC elisp
-    (use-package undo-tree
-      :ensure t
-      :config
-      (global-undo-tree-mode))
-  #+END_SRC
-* smartparens
-  #+BEGIN_SRC elisp
-    (use-package smartparens
-      :ensure t
-      :config
-      (require 'smartparens-config)
-      (smartparens-strict-mode))
-  #+END_SRC
-* wolfram-alpha
-  #+BEGIN_SRC elisp
-    (use-package wolfram
-      :ensure t
-      :config
-      (setq wolfram-alpha-app-id "25AT83-93YUAPUT6K"))
-  #+END_SRC
 * rust
-  #+BEGIN_SRC elisp
+  #+BEGIN_SRC emacs-lisp
     (use-package rust-mode
       :ensure t
       :config
@@ -1068,7 +1064,7 @@
       :ensure t)
   #+END_SRC
 * chinese
-  #+BEGIN_SRC elisp
+  #+BEGIN_SRC emacs-lisp
     (use-package chinese-pyim
       :ensure nil
       :config
@@ -1078,9 +1074,9 @@
         :config (chinese-pyim-basedict-enable)))
   #+END_SRC
 * editor config
-  #+BEGIN_SRC elisp
+#+BEGIN_SRC emacs-lisp
     (use-package editorconfig
       :ensure t
       :config
       (editorconfig-mode 1))
-  #+END_SRC
+#+END_SRC
