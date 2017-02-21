@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-changed_files = "$(git diff-tree -r --name-only --no-commit-id ORIG_HEAD HEAD)"
+changed_files="$(git diff-tree -r --name-only --no-commit-id ORIG_HEAD HEAD)"
 
-if [ echo "$changed_files" | grep --quiet "init.org" ]
+if ( echo "$changed_files" | grep --quiet "init.org" )
 then
     emacs -batch \
       --eval="(package-initialize)" \
