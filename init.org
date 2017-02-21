@@ -38,81 +38,6 @@
   #+BEGIN_SRC emacs-lisp
     (server-start)
   #+END_SRC
-* evil
-  #+BEGIN_SRC emacs-lisp
-    (use-package evil
-      :ensure t
-      :config
-      (define-key evil-normal-state-map (kbd "C-u") 'evil-scroll-up)
-      (evil-mode 1))
-
-    (use-package evil-escape
-      :ensure t
-      :config
-      (setq-default evil-escape-key-sequence "fd")
-      (setq-default evil-escape-delay 0.2)
-      (evil-escape-mode))
-
-    (use-package evil-leader
-      :ensure t
-      :config
-      (global-evil-leader-mode)
-      (evil-leader/set-leader "<SPC>")
-      (evil-leader/set-key-for-mode 'org-mode "r" 'org-toggle-latex-fragment)
-      (evil-leader/set-key-for-mode 'org-mode "s" 'org-schedule)
-      (evil-leader/set-key
-        "sh" 'split-window-below
-        "sv" 'split-window-right
-        "ms" 'magit-status
-        "ml" 'magit-log
-        "mb" 'magit-log-buffer-file
-        "ci" 'evilnc-comment-or-uncomment-lines
-        "cl" 'evilnc-quick-comment-or-uncomment-to-the-line
-        "ll" 'evilnc-quick-comment-or-uncomment-to-the-line
-        "cc" 'evilnc-copy-and-comment-lines
-        "cp" 'evilnc-comment-or-uncomment-paragraphs
-        "cr" 'comment-or-uncomment-region
-        "cv" 'evilnc-toggle-invert-comment-line-by-line
-        "\\" 'evilnc-comment-operator
-        "pf" 'projectile-find-file
-        "pp" 'projectile-switch-project
-        "ps" 'ag-project
-        "pa" 'projectile-ag
-        "oa" 'org-agenda
-        "oc" 'org-capture
-        "k"  'kill-this-buffer
-        "e" 'find-file
-        "b" 'switch-to-buffer))
-
-    (use-package org-evil
-      :ensure t
-      :config
-      (define-key org-agenda-mode-map "j" 'evil-next-line)
-      (define-key org-agenda-mode-map "k" 'evil-previous-line))
-
-    (use-package evil-surround
-      :ensure t
-      :config
-      (global-evil-surround-mode 1))
-
-    (use-package evil-nerd-commenter
-      :ensure t
-      :config
-      (evilnc-default-hotkeys))
-
-    (use-package evil-magit
-      :ensure t)
-
-    (use-package evil-snipe
-      :ensure t
-      :config
-      (evil-snipe-mode 1)
-      (setq evil-snipe-scope 'whole-visible)
-      (add-hook 'magit-mode-hook 'turn-off-evil-snipe-override-mode))
-
-    (use-package evil-cleverparens
-      :ensure t)
-  #+END_SRC
 * File-to-Mode mapping
   Define via filename or extension the major mode for editing
   #+BEGIN_SRC emacs-lisp
@@ -695,12 +620,7 @@
   =rtags= for jumping around in source code
   #+BEGIN_SRC emacs-lisp
     (use-package rtags
-      :ensure t
-      :config
-      (evil-define-key 'normal c-mode-map (kbd "g d") 'rtags-find-symbol-at-point)
-      (evil-define-key 'normal c++-mode-map (kbd "g d") 'rtags-find-symbol-at-point)
-      (evil-leader/set-key-for-mode 'c++-mode "r" 'rtags-rename-symbol)
-      (evil-leader/set-key-for-mode 'c++-mode "a" 'rtags-find-references-at-point))
+      :ensure t)
   #+END_SRC
 
   =irony= for completion
@@ -915,7 +835,7 @@
   pdf tools for searching through pdf
   #+BEGIN_SRC emacs-lisp
     (use-package pdf-tools
-      :ensure t
+      ;; :ensure t
       :config
       (pdf-tools-install))
   #+END_SRC
@@ -1080,3 +1000,83 @@
       :config
       (editorconfig-mode 1))
 #+END_SRC
+
+* evil
+  #+BEGIN_SRC emacs-lisp
+    (use-package evil
+      :ensure t
+      :config
+      (define-key evil-normal-state-map (kbd "C-u") 'evil-scroll-up)
+      (evil-define-key 'normal c-mode-map (kbd "g d") 'rtags-find-symbol-at-point)
+      (evil-define-key 'normal c++-mode-map (kbd "g d") 'rtags-find-symbol-at-point)
+      (evil-leader/set-key-for-mode 'c++-mode "r" 'rtags-rename-symbol)
+      (evil-leader/set-key-for-mode 'c++-mode "a" 'rtags-find-references-at-point)
+      (evil-mode 1))
+
+    (use-package evil-escape
+      :ensure t
+      :config
+      (setq-default evil-escape-key-sequence "fd")
+      (setq-default evil-escape-delay 0.2)
+      (evil-escape-mode))
+
+    (use-package evil-leader
+      :ensure t
+      :config
+      (global-evil-leader-mode)
+      (evil-leader/set-leader "<SPC>")
+      (evil-leader/set-key-for-mode 'org-mode "r" 'org-toggle-latex-fragment)
+      (evil-leader/set-key-for-mode 'org-mode "s" 'org-schedule)
+      (evil-leader/set-key
+        "sh" 'split-window-below
+        "sv" 'split-window-right
+        "ms" 'magit-status
+        "ml" 'magit-log
+        "mb" 'magit-log-buffer-file
+        "ci" 'evilnc-comment-or-uncomment-lines
+        "cl" 'evilnc-quick-comment-or-uncomment-to-the-line
+        "ll" 'evilnc-quick-comment-or-uncomment-to-the-line
+        "cc" 'evilnc-copy-and-comment-lines
+        "cp" 'evilnc-comment-or-uncomment-paragraphs
+        "cr" 'comment-or-uncomment-region
+        "cv" 'evilnc-toggle-invert-comment-line-by-line
+        "\\" 'evilnc-comment-operator
+        "pf" 'projectile-find-file
+        "pp" 'projectile-switch-project
+        "ps" 'ag-project
+        "pa" 'projectile-ag
+        "oa" 'org-agenda
+        "oc" 'org-capture
+        "k"  'kill-this-buffer
+        "e" 'find-file
+        "b" 'switch-to-buffer))
+
+    (use-package org-evil
+      :ensure t
+      :config
+      (define-key org-agenda-mode-map "j" 'evil-next-line)
+      (define-key org-agenda-mode-map "k" 'evil-previous-line))
+
+    (use-package evil-surround
+      :ensure t
+      :config
+      (global-evil-surround-mode 1))
+
+    (use-package evil-nerd-commenter
+      :ensure t
+      :config
+      (evilnc-default-hotkeys))
+
+    (use-package evil-magit
+      :ensure t)
+
+    (use-package evil-snipe
+      :ensure t
+      :config
+      (evil-snipe-mode 1)
+      (setq evil-snipe-scope 'whole-visible)
+      (add-hook 'magit-mode-hook 'turn-off-evil-snipe-override-mode))
+
+    (use-package evil-cleverparens
+      :ensure t)
+  #+END_SRC
