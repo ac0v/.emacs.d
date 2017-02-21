@@ -670,13 +670,13 @@
 
   Use googles cpp lint checker
   #+BEGIN_SRC emacs-lisp
-    (use-package flycheck-google-cpplint
-      :ensure t
-      :config
-      (setq flycheck-googlelint-verbose "3"
-            flycheck-googlelint-filter "-whitespace,+whitespace/braces"
-            flycheck-googlelint-root "/usr/bin/cpplint"
-            flycheck-googlelint-linelength "120"))
+    ;; (use-package flycheck-google-cpplint
+    ;;   :ensure t
+    ;;   :config
+    ;;   (setq flycheck-googlelint-verbose "3"
+    ;;         flycheck-googlelint-filter "-whitespace,+whitespace/braces"
+    ;;         flycheck-googlelint-root "/usr/bin/cpplint"
+    ;;         flycheck-googlelint-linelength "120"))
   #+END_SRC
 
 
