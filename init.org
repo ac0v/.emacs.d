@@ -620,7 +620,9 @@
   =rtags= for jumping around in source code
   #+BEGIN_SRC emacs-lisp
     (use-package rtags
-      :ensure t)
+      :ensure t
+      :config
+      (require 'flycheck-rtags))
   #+END_SRC
 
   =irony= for completion
@@ -636,6 +638,12 @@
       :ensure t
       :config
       (add-to-list 'company-backends 'company-irony))
+
+    ;; (use-package flycheck-irony
+    ;;   :ensure t
+    ;;   :config
+    ;;   (eval-after-load 'flycheck
+    ;;     '(add-hook 'flycheck-mode-hook #'flycheck-irony-setup)))
   #+END_SRC
 
   Major mode for =CMakeLists.txt= files
@@ -746,18 +754,21 @@
       :bind (("C-c c" . org-capture)
              ("C-c a" . org-agenda))
       :config
+      (setq org-modules (append org-modules '(org-habit)))
+      (setq org-habit-graph-column 80)
+      (setq org-habit-show-habits-only-for-today nil)
       (setq org-todo-keywords
-      (quote ((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
-              (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)" "PHONE" "MEETING"))))
+            (quote ((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
+                    (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)" "PHONE" "MEETING"))))
       (setq org-todo-keyword-faces
-      (quote (("TODO" :foreground "red" :weight bold)
-              ("NEXT" :foreground "blue" :weight bold)
-              ("DONE" :foreground "forest green" :weight bold)
-              ("WAITING" :foreground "orange" :weight bold)
-              ("HOLD" :foreground "magenta" :weight bold)
-              ("CANCELLED" :foreground "forest green" :weight bold)
-              ("MEETING" :foreground "forest green" :weight bold)
-              ("PHONE" :foreground "forest green" :weight bold))))
+            (quote (("TODO" :foreground "red" :weight bold)
+                    ("NEXT" :foreground "blue" :weight bold)
+                    ("DONE" :foreground "forest green" :weight bold)
+                    ("WAITING" :foreground "orange" :weight bold)
+                    ("HOLD" :foreground "magenta" :weight bold)
+                    ("CANCELLED" :foreground "forest green" :weight bold)
+                    ("MEETING" :foreground "forest green" :weight bold)
+                    ("PHONE" :foreground "forest green" :weight bold))))
       (setq org-src-fontify-natively t)
       (setq org-src-tab-acts-natively t)
       (setq org-src-tab-acts-natively t)
@@ -765,10 +776,16 @@
       (setq org-reveal-root (concat "file://" (getenv "HOME") "/src/reveal.js"))
       (setq org-reveal-mathjax t)
       (setq org-default-notes-file (concat org-directory "~/Dropbox/org/notes.org"))
-      (setq org-ellipsis "⤵")
       (setq org-src-tab-acts-natively t)
       (setq org-agenda-custom-commands
-            '(("c" . "My Custom Agendas")
+            '(
+              ("h" "Daily habits"
+               ((agenda ""))
+               ((org-agenda-show-log t)
+                (org-agenda-ndays 7)
+                (org-agenda-log-mode-items '(state))
+                (org-agenda-skip-function '(org-agenda-skip-entry-if 'notregexp ":DAILY:"))))
+              ("c" . "My Custom Agendas")
               ("cu" "Unscheduled TODO"
                ((todo ""
                       ((org-agenda-overriding-header "\nUnscheduled TODO")
@@ -794,6 +811,8 @@
     (use-package org-bullets
       :ensure t
       :config
+      (setq org-ellipsis " …")
+      (setq org-bullets-bullet-list '("•"))
       (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
   #+END_SRC
 
@@ -1009,6 +1028,8 @@
       (define-key evil-normal-state-map (kbd "C-u") 'evil-scroll-up)
       (evil-define-key 'normal c-mode-map (kbd "g d") 'rtags-find-symbol-at-point)
       (evil-define-key 'normal c++-mode-map (kbd "g d") 'rtags-find-symbol-at-point)
+      (evil-define-key 'normal c-mode-map (kbd "g r") 'rtags-find-references-at-point)
+      (evil-define-key 'normal c++-mode-map (kbd "g r") 'rtags-find-references-at-point)
       (evil-leader/set-key-for-mode 'c++-mode "r" 'rtags-rename-symbol)
       (evil-leader/set-key-for-mode 'c++-mode "a" 'rtags-find-references-at-point)
       (evil-mode 1))
@@ -1044,6 +1065,8 @@
         "pf" 'projectile-find-file
         "pp" 'projectile-switch-project
         "ps" 'ag-project
+        "pc" 'projectile-compile-project
+        "pt" 'projectile-test-project
         "pa" 'projectile-ag
         "oa" 'org-agenda
         "oc" 'org-capture
@@ -1055,7 +1078,13 @@
       :ensure t
       :config
       (define-key org-agenda-mode-map "j" 'evil-next-line)
-      (define-key org-agenda-mode-map "k" 'evil-previous-line))
+      (define-key org-agenda-mode-map "k" 'evil-previous-line)
+      (evil-define-key 'normal org-evil-mode-map
+        "-" 'org-cycle-list-bullet
+        "H" 'org-metaleft
+        "J" 'org-metaup
+        "K" 'org-metadown
+        "L" 'org-metaleft))
 
     (use-package evil-surround
       :ensure t
