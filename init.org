@@ -125,7 +125,7 @@
   #+END_SRC
 
   #+BEGIN_SRC emacs-lisp
-    (add-hook 'before-save-hook 'delete-trailing-whitespace)
+    ;; (add-hook 'before-save-hook 'delete-trailing-whitespace)
   #+END_SRC
 
 * Appearance
@@ -152,6 +152,7 @@
     (use-package smartparens
       :ensure t
       :config
+      (require 'smartparens-config)
       (show-paren-mode 1))
   #+END_SRC
 
@@ -167,7 +168,10 @@
   Project explorer, rarely used
   #+BEGIN_SRC emacs-lisp
     (use-package neotree
-      :ensure t)
+      :ensure t
+      :config
+      (global-set-key [f2] 'neotree-toggle)
+      (setq neo-theme (if (display-graphic-p) 'icons 'arrow)))
   #+END_SRC
 
   Diff directories, projects and stuff
@@ -191,11 +195,12 @@
       ;; no regexp by default
       (setq ivy-initial-inputs-alist nil)
       (setq magit-completing-read-function 'ivy-completing-read)
+      (setq completion-in-region-function 'ivy-completion-in-region)
       ;; configure regexp engine.
       (setq ivy-re-builders-alist
             ;; allow input not in order
             '((t   . ivy--regex-ignore-order)))
-     (define-key ivy-mode-map (kbd "C-'") 'ivy-avy))
+      (define-key ivy-mode-map (kbd "C-'") 'ivy-avy))
   #+END_SRC
 
   replacement for helm-swoop
@@ -255,12 +260,12 @@
       (setq company-idle-delay 0
             company-echo-delay 0
             company-dabbrev-downcase nil
-            company-minimum-prefix-length 3
+            company-minimum-prefix-length 1
             ompany-tooltip-limit 20
             company-selection-wrap-around t
             company-transformers '(company-sort-by-occurrence
                                    company-sort-by-backend-importance))
-      (define-key company-mode-map (kbd "C-M-i") 'company-indent-or-complete-common)
+      (define-key company-mode-map (kbd "C-TAB") 'counsel-company)
       (global-company-mode))
   #+END_SRC
 
@@ -289,7 +294,10 @@
     (use-package company-flx
       :ensure t
       :config
-      (company-flx-mode +1))
+      (with-eval-after-load 'company
+        (add-hook 'company-mode-hook (lambda ()
+                                       (add-to-list 'company-backends 'company-capf)))
+        (company-flx-mode +1)))
   #+END_SRC
 
 * Syntax/Spell Checking
@@ -335,7 +343,7 @@
     "Kill all other buffers."
     (interactive)
     (mapc 'kill-buffer
-	  (delq (current-buffer) (buffer-list))))
+          (delq (current-buffer) (buffer-list))))
   #+END_SRC
 
   Use perl tidy on regions and functions
@@ -460,21 +468,28 @@
       :ensure t)
   #+END_SRC
 
-  =tern= for source code navigation
   #+BEGIN_SRC emacs-lisp
-    (use-package tern
+    (use-package json-mode
       :ensure t)
-    (use-package company-tern
-      :ensure t
-      :config
-      (add-to-list 'company-backends '(company-tern)))
   #+END_SRC
 
   #+BEGIN_SRC emacs-lisp
+    (defun setup-tide-mode ()
+      (interactive)
+      (tide-setup)
+      (flycheck-mode +1)
+      (setq flycheck-check-syntax-automatically '(save mode-enabled))
+      (eldoc-mode +1)
+      (tide-hl-identifier-mode +1)
+      ;; company is an optional dependency. You have to
+      ;; install it separately via package-install
+      ;; `M-x package-install [ret] company`
+      (company-mode +1))
+
     (use-package tide
       :ensure t
-      :config)
-      ;(tide-setup))
+      :config
+      (add-hook 'typescript-mode-hook #'setup-tide-mode))
   #+END_SRC
 * PHP
   use =php-mode=
@@ -619,6 +634,8 @@
 
   =rtags= for jumping around in source code
   #+BEGIN_SRC emacs-lisp
+    (use-package flycheck-rtags
+      :ensure t)
     (use-package rtags
       :ensure t
       :config
@@ -659,12 +676,6 @@
       :config
       (require 'rtags)
       (cmake-ide-setup))
-  #+END_SRC
-
-  =malinka= for c/c++ projects
-  #+BEGIN_SRC emacs-lisp
-    ;; (use-package malinka
-    ;;   :ensure t)
   #+END_SRC
 
   If =cmake-ide= cannot find correct build dir, provide function to solve issue
@@ -709,28 +720,35 @@
   #+END_SRC
 
 * Python
+  #+BEGIN_SRC emacs-lisp
+    (use-package elpy
+      :ensure
+      :config
+      (elpy-enable))
+  #+END_SRC
   =anaconda= for navigation and auto completion
   #+BEGIN_SRC emacs-lisp
-    (use-package anaconda-mode
-      :ensure t
-      :config
-      (add-hook 'python-mode-hook 'anaconda-eldoc-mode)
-      (add-hook 'python-mode-hook 'anaconda-mode))
+  ;  (use-package anaconda-mode
+  ;    :ensure t
+  ;    :config
+  ;    (add-hook 'python-mode-hook 'anaconda-eldoc-mode)
+  ;    (add-hook 'python-mode-hook 'anaconda-mode))
   #+END_SRC
 
   =company-anaconda= as backend for company
   #+BEGIN_SRC emacs-lisp
-    (use-package company-anaconda
-      :ensure t
-      :config
-      (eval-after-load "company"
-        '(add-to-list 'company-backends 'company-anaconda)))
+  ;  (use-package company-anaconda
+  ;    :ensure t
+  ;    :config
+  ;    (eval-after-load "company"
+  ;      '(add-to-list 'company-backends 'company-anaconda)))
   #+END_SRC
 
   Use =python-mode= as major mode for python
   #+BEGIN_SRC emacs-lisp
     (use-package python-mode
       :ensure t
+      :bind (("C-c C-c" . python-shell-send-buffer))
       :config
       (add-hook 'python-mode-hook 'anaconda-mode)
       (add-hook 'python-mode-hook 'anaconda-eldoc-mode)
@@ -744,19 +762,27 @@
   #+BEGIN_SRC emacs-lisp
     (use-package go-mode
       :ensure t)
-  #+END_SRC
 
+    (use-package company-go
+      :ensure t
+      :config
+      (add-hook 'go-mode-hook
+                (lambda ()
+                  (set (make-local-variable 'company-backends) '(company-go))
+                  (company-mode))))
+  #+END_SRC
 * Org
-  =org= wiht some defaults
+  =org= with some defaults
   #+BEGIN_SRC emacs-lisp
     (use-package org
       :ensure t
       :bind (("C-c c" . org-capture)
              ("C-c a" . org-agenda))
       :config
+      (add-hook 'org-capture-mode-hook 'evil-insert-state)
       (setq org-modules (append org-modules '(org-habit)))
+      (setq org-habit-show-habits-only-for-today t)
       (setq org-habit-graph-column 80)
-      (setq org-habit-show-habits-only-for-today nil)
       (setq org-todo-keywords
             (quote ((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
                     (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)" "PHONE" "MEETING"))))
@@ -797,6 +823,18 @@
                "* TODO %?\n"))))
   #+END_SRC
 
+  done yesterday
+  #+BEGIN_SRC emacs-lisp
+    (defun org-todo-with-date (&optional arg)
+      (interactive "P")
+      (cl-letf* ((org-read-date-prefer-future nil)
+                 (my-current-time (org-read-date t t nil "when:" nil nil nil))
+                 ((symbol-function #'org-current-effective-time)
+                  #'(lambda () my-current-time)))
+        (org-todo arg)
+        )) 
+  #+END_SRC
+ 
   =ox-reveal= for html/js presentations
   #+BEGIN_SRC emacs-lisp
     (use-package ox-reveal
@@ -834,6 +872,16 @@
       (setq org-alert-interval 1800)
       (setq alert-default-style 'libnotify))
   #+END_SRC
+
+  journal
+  #+BEGIN_SRC emacs-lisp
+    (use-package org-journal
+      :ensure t
+      :config
+      (setq org-journal-dir "~/.journal")
+      (setq org-journal-file-format "%Y-%m-%d.org"))
+  #+END_SRC
+  
 * Git
   =magit= for git integration
   #+BEGIN_SRC emacs-lisp
@@ -842,6 +890,20 @@
       :bind (("C-x g" . magit-status)))
   #+END_SRC
 
+  show commit message of line
+  #+BEGIN_SRC emacs-lisp
+    (use-package git-messenger
+      :ensure t
+      :config
+      (setq git-messenger:show-detail t)
+      (setq git-messenger:use-magit-popup t))
+  #+END_SRC
+
+  show changes in buffer
+  #+BEGIN_SRC emacs-lisp
+    (use-package git-gutter+
+      :ensure t)
+  #+END_SRC
 * PDF
   Docview default resolution is ugly
   #+BEGIN_SRC emacs-lisp
@@ -1020,16 +1082,51 @@
       (editorconfig-mode 1))
 #+END_SRC
 
+* elfeed
+  
+#+BEGIN_SRC emacs-lisp
+  (use-package elfeed
+    :ensure t
+    :config
+    (evil-leader/set-key "nf" 'elfeed)
+    (setq elfeed-feeds
+          '("http://nullprogram.com/feed/"
+            "http://www.tsinghua.edu.cn/publish/news/rss/all.xml"
+            "http://planet.emacsen.org/atom.xml"))
+    (add-to-list 'evil-emacs-state-modes 'elfeed-search-mode)
+    (add-to-list 'evil-emacs-state-modes 'elfeed-show-mode)
+    (add-to-list 'evil-emacs-state-modes 'rtags-mode)
+    (define-key elfeed-show-mode-map "j" 'evil-next-line)
+    (define-key elfeed-show-mode-map "k" 'evil-previous-line)
+    (define-key elfeed-search-mode-map "j" 'evil-next-line)
+    (define-key elfeed-search-mode-map "k" 'evil-previous-line))
+
+  (use-package elfeed-goodies
+    :ensure t
+    :config
+    (elfeed-goodies/setup)
+    (evil-define-key 'evilified elfeed-show-mode-map "o" 'elfeed-goodies/show-ace-link))
+
+  (use-package elfeed-org
+    :ensure t)
+
+#+END_SRC
 * evil
   #+BEGIN_SRC emacs-lisp
     (use-package evil
       :ensure t
       :config
       (define-key evil-normal-state-map (kbd "C-u") 'evil-scroll-up)
+      (define-key evil-normal-state-map (kbd "g f") 'imenu)
+      (define-key evil-normal-state-map (kbd "g D") 'dumb-jump-go)
       (evil-define-key 'normal c-mode-map (kbd "g d") 'rtags-find-symbol-at-point)
       (evil-define-key 'normal c++-mode-map (kbd "g d") 'rtags-find-symbol-at-point)
+      (evil-define-key 'normal rust-mode-map (kbd "g d") 'racer-find-definition)
+      (evil-define-key 'normal c-mode-map (kbd "g t") 'rtags-symbol-type)
+      (evil-define-key 'normal c++-mode-map (kbd "g t") 'rtags-symbol-type)
       (evil-define-key 'normal c-mode-map (kbd "g r") 'rtags-find-references-at-point)
       (evil-define-key 'normal c++-mode-map (kbd "g r") 'rtags-find-references-at-point)
+      (evil-define-key 'normal go-mode-map (kbd "g d") 'godef-jump)
       (evil-leader/set-key-for-mode 'c++-mode "r" 'rtags-rename-symbol)
       (evil-leader/set-key-for-mode 'c++-mode "a" 'rtags-find-references-at-point)
       (evil-mode 1))
@@ -1046,13 +1143,20 @@
       :config
       (global-evil-leader-mode)
       (evil-leader/set-leader "<SPC>")
-      (evil-leader/set-key-for-mode 'org-mode "r" 'org-toggle-latex-fragment)
-      (evil-leader/set-key-for-mode 'org-mode "s" 'org-schedule)
+      (evil-leader/set-key-for-mode 'org-mode 
+        "s" 'org-schedule
+        "r" 'org-toggle-latex-fragment
+        "d" 'org-deadline
+        "$" 'org-archive-subtree
+        "c" 'org-set-category-property
+        "P" 'org-set-property
+        "t" 'org-set-tags)
       (evil-leader/set-key
         "sh" 'split-window-below
         "sv" 'split-window-right
         "ms" 'magit-status
         "ml" 'magit-log
+        "mp" 'git-messenger:popup-message
         "mb" 'magit-log-buffer-file
         "ci" 'evilnc-comment-or-uncomment-lines
         "cl" 'evilnc-quick-comment-or-uncomment-to-the-line
@@ -1070,6 +1174,8 @@
         "pa" 'projectile-ag
         "oa" 'org-agenda
         "oc" 'org-capture
+        "oj" 'org-journal-new-entry
+        "TAB" 'ace-window
         "k"  'kill-this-buffer
         "e" 'find-file
         "b" 'switch-to-buffer))
@@ -1107,5 +1213,122 @@
       (add-hook 'magit-mode-hook 'turn-off-evil-snipe-override-mode))
 
     (use-package evil-cleverparens
+      :ensure t)
+
+    (use-package evil-multiedit
+      :ensure t
+      :config
+      ;; Highlights all matches of the selection in the buffer.
+      (define-key evil-visual-state-map "R" 'evil-multiedit-match-all)
+
+      ;; Match the word under cursor (i.e. make it an edit region). Consecutive presses will
+      ;; incrementally add the next unmatched match.
+      (define-key evil-normal-state-map (kbd "M-d") 'evil-multiedit-match-and-next)
+      ;; Match selected region.
+      (define-key evil-visual-state-map (kbd "M-d") 'evil-multiedit-match-and-next)
+
+      ;; Same as M-d but in reverse.
+      (define-key evil-normal-state-map (kbd "M-D") 'evil-multiedit-match-and-prev)
+      (define-key evil-visual-state-map (kbd "M-D") 'evil-multiedit-match-and-prev)
+
+      ;; OPTIONAL: If you prefer to grab symbols rather than words, use
+      ;; `evil-multiedit-match-symbol-and-next` (or prev).
+
+      ;; Restore the last group of multiedit regions.
+      (define-key evil-visual-state-map (kbd "C-M-D") 'evil-multiedit-restore)
+
+      ;; RET will toggle the region under the cursor
+      (define-key evil-multiedit-state-map (kbd "RET") 'evil-multiedit-toggle-or-restrict-region)
+
+      ;; ...and in visual mode, RET will disable all fields outside the selected region
+      (define-key evil-visual-state-map (kbd "RET") 'evil-multiedit-toggle-or-restrict-region)
+
+      ;; For moving between edit regions
+      (define-key evil-multiedit-state-map (kbd "C-n") 'evil-multiedit-next)
+      (define-key evil-multiedit-state-map (kbd "C-p") 'evil-multiedit-prev)
+      (define-key evil-multiedit-insert-state-map (kbd "C-n") 'evil-multiedit-next)
+      (define-key evil-multiedit-insert-state-map (kbd "C-p") 'evil-multiedit-prev)
+
+      ;; Ex command that allows you to invoke evil-multiedit with a regular expression, e.g.
+      (evil-ex-define-cmd "ie[dit]" 'evil-multiedit-ex-match))
+
+    (use-package evil-smartparens
+      :ensure t
+      :config
+      (add-hook 'smartparens-enabled-hook #'evil-smartparens-mode))
+  #+END_SRC
+* jumping
+  jumping with ag and grep
+#+BEGIN_SRC emacs-lisp  
+  (use-package dumb-jump
+    :ensure t
+    :config
+  (eval-after-load 'evil
+    (eval-after-load 'dumb-jump
+      (defadvice dumb-jump-go (before dotemacs activate)
+        (evil--jumps-push)))))
+#+END_SRC
+
+  jumping with avy
+#+BEGIN_SRC emacs-lisp
+  (use-package avy
+    :ensure t
+    :bind (
+    ("M-l" . avy-goto-line)
+    ("M-w" . avy-goto-word-1)))
+#+END_SRC
+
+* gnus, mail, ...
+  #+BEGIN_SRC emacs-lisp
+    (use-package gnus
+      :ensure t
+      :config
+      (setq gnus-select-method '(nnnil ""))
+      (setq gnus-secondary-select-methods '((nnml "")))
+      (add-hook 'gnus-group-mode-hook 'gnus-topic-mode)
+      (setq gnus-mime-display-multipart-related-as-mixed t)
+      (setq smiley-style 'medium)
+      (setq user-mail-address "bernhard@specht.net"
+            user-full-name    "Bernhard Specht")
+      (setq-default
+       gnus-summary-line-format "%U%R%z %(%&user-date;  %-15,15f  %B (%c) %s%)\n"
+       gnus-user-date-format-alist '((t . "%Y-%m-%d %H:%M"))
+       gnus-group-line-format "%M%S%p%P%5y:%B %G\n";;"%B%(%g%)"
+       gnus-summary-thread-gathering-function 'gnus-gather-threads-by-references
+       gnus-thread-sort-functions '(gnus-thread-sort-by-most-recent-date)
+       gnus-ignored-newsgroups "^to\\.\\|^[0-9. ]+\\( \\|$\\)\\|^[\”]\”[#’()]"
+       gnus-sum-thread-tree-false-root ""
+       gnus-sum-thread-tree-indent " "
+       gnus-sum-thread-tree-leaf-with-other "├► "
+       gnus-sum-thread-tree-root ""
+       gnus-sum-thread-tree-single-leaf "╰► "
+       gnus-sum-thread-tree-vertical "│"
+       gnus-article-browse-delete-temp t
+       gnus-fetch-old-headers t
+       gnus-treat-strip-trailing-blank-lines 'last
+       gnus-keep-backlog 'nil
+       gnus-summary-display-arrow nil ; Don't show that annoying arrow:
+       gnus-mime-display-multipart-related-as-mixed t ; Show more MIME-stuff:
+       gnus-auto-select-first nil ; Don't get the first article automatically:
+       smiley-style 'medium
+       gnus-keep-backlog '0))
+  #+END_SRC
+* irc
+  #+BEGIN_SRC emacs-lisp
+    (use-package erc
+      :ensure t
+      :config
+      ;(setq erc-autojoin-channels-alist
+      ;      '(("freenode.net" "#moarvm" "#perl6")))
+      (require 'erc-services)
+      (erc-services-mode 1)
+      (add-to-list 'erc-modules 'notifications)
+      (setq erc-prompt-for-nickserv-password t)
+      (with-eval-after-load "erc"
+        (erc :server "irc.freenode.net" :port 6667 :nick "spebern")))
+  #+END_SRC
+* highlighting variables
+  #+BEGIN_SRC emacs-lisp
+    (use-package highlight-symbol
       :ensure t)
   #+END_SRC
