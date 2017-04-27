@@ -720,28 +720,20 @@
   #+END_SRC
 
 * Python
-  #+BEGIN_SRC emacs-lisp
-    (use-package elpy
-      :ensure
-      :config
-      (elpy-enable))
-  #+END_SRC
   =anaconda= for navigation and auto completion
   #+BEGIN_SRC emacs-lisp
-  ;  (use-package anaconda-mode
-  ;    :ensure t
-  ;    :config
-  ;    (add-hook 'python-mode-hook 'anaconda-eldoc-mode)
-  ;    (add-hook 'python-mode-hook 'anaconda-mode))
+    (use-package anaconda-mode
+      :ensure
+      :config)
   #+END_SRC
 
   =company-anaconda= as backend for company
   #+BEGIN_SRC emacs-lisp
-  ;  (use-package company-anaconda
-  ;    :ensure t
-  ;    :config
-  ;    (eval-after-load "company"
-  ;      '(add-to-list 'company-backends 'company-anaconda)))
+    (use-package company-anaconda
+      :ensure t
+      :config
+      (eval-after-load "company"
+        '(add-to-list 'company-backends 'company-anaconda)))
   #+END_SRC
 
   Use =python-mode= as major mode for python
@@ -1119,6 +1111,8 @@
       (define-key evil-normal-state-map (kbd "C-u") 'evil-scroll-up)
       (define-key evil-normal-state-map (kbd "g f") 'imenu)
       (define-key evil-normal-state-map (kbd "g D") 'dumb-jump-go)
+      (evil-define-key 'normal python-mode-map (kbd "g d") 'anaconda-mode-find-definitions)
+      (evil-define-key 'normal python-mode-map (kbd "g r") 'anaconda-mode-find-references)
       (evil-define-key 'normal c-mode-map (kbd "g d") 'rtags-find-symbol-at-point)
       (evil-define-key 'normal c++-mode-map (kbd "g d") 'rtags-find-symbol-at-point)
       (evil-define-key 'normal rust-mode-map (kbd "g d") 'racer-find-definition)
