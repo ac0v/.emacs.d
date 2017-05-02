@@ -720,20 +720,20 @@
   #+END_SRC
 
 * Python
-  =anaconda= for navigation and auto completion
-  #+BEGIN_SRC emacs-lisp
-    (use-package anaconda-mode
-      :ensure
-      :config)
-  #+END_SRC
+  =jedi= for navigation and auto completion
 
-  =company-anaconda= as backend for company
   #+BEGIN_SRC emacs-lisp
-    (use-package company-anaconda
+    (use-package jedi
       :ensure t
       :config
-      (eval-after-load "company"
-        '(add-to-list 'company-backends 'company-anaconda)))
+      (add-hook 'python-mode-hook 'jedi:setup))
+
+    (defun my/python-mode-hook ()
+      (add-to-list 'company-backends 'company-jedi))
+    (use-package company-jedi
+                 :ensure t
+                 :config 
+                 (add-hook 'python-mode-hook 'my/python-mode-hook))
   #+END_SRC
 
   Use =python-mode= as major mode for python
@@ -742,8 +742,6 @@
       :ensure t
       :bind (("C-c C-c" . python-shell-send-buffer))
       :config
-      (add-hook 'python-mode-hook 'anaconda-mode)
-      (add-hook 'python-mode-hook 'anaconda-eldoc-mode)
       (add-hook 'python-mode-hook
                 (lambda ()
                   (setq-default tab-width 4))))
@@ -873,7 +871,24 @@
       (setq org-journal-dir "~/.journal")
       (setq org-journal-file-format "%Y-%m-%d.org"))
   #+END_SRC
-  
+
+  #+BEGIN_SRC emacs-lisp
+    (defun eos/org-inline-css-hook (exporter)
+      "Insert custom inline css to automatically set the
+     background of code to whatever theme I'm using's background"
+      (when (eq exporter 'html)
+        (let* ((my-pre-bg (face-background 'default))
+               (my-pre-fg (face-foreground 'default)))
+          (setq
+           org-html-head-extra
+           (concat
+            org-html-head-extra
+            (format
+             "<style type=\"text/css\">\n pre.src {background-color: %s; color: %s;}</style>\n"
+             my-pre-bg my-pre-fg))))))
+    (add-hook 'org-export-before-processing-hook #'eos/org-inline-css-hook)
+  #+END_SRC
+
 * Git
   =magit= for git integration
   #+BEGIN_SRC emacs-lisp
