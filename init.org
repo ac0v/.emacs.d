@@ -41,33 +41,34 @@
 * File-to-Mode mapping
   Define via filename or extension the major mode for editing
   #+BEGIN_SRC emacs-lisp
-    (add-to-list 'auto-mode-alist '("\\.pdf\\'" . pdf-tools-install))
-    (add-to-list 'auto-mode-alist '("\\.cpp$" . c++-mode))
-    (add-to-list 'auto-mode-alist '("\\.hpp$" . c++-mode))
-    (add-to-list 'auto-mode-alist '("\\.tpp$" . c++-mode))
-    (add-to-list 'auto-mode-alist '("\\.psgi$" . cperl-mode))
-    (add-to-list 'auto-mode-alist '("\\.t\\'"  . cperl-mode))
-    (add-to-list 'auto-mode-alist '("cpanfile" . cperl-mode))
-    (add-to-list 'auto-mode-alist '("\\.phtml\\'" . web-mode))
-    (add-to-list 'auto-mode-alist '("\\.inc\\'" . web-mode))
-    (add-to-list 'auto-mode-alist '("\\.tpl\\'" . web-mode))
-    (add-to-list 'auto-mode-alist '("\\.php\\'" . php-mode))
-    (add-to-list 'auto-mode-alist '("\\.blade\\.php\\'" . web-mode))
-    (add-to-list 'auto-mode-alist '("\\.jsp\\'" . web-mode))
-    (add-to-list 'auto-mode-alist '("\\.as[cp]x\\'" . web-mode))
-    (add-to-list 'auto-mode-alist '("\\.erb\\'" . web-mode))
-    (add-to-list 'auto-mode-alist '("\\.mustache\\'" . web-mode))
-    (add-to-list 'auto-mode-alist '("\\.djhtml\\'" . web-mode))
-    (add-to-list 'auto-mode-alist '("\\.*tpl\\'" . web-mode))
-    (add-to-list 'auto-mode-alist '("\\.*tml\\'" . web-mode))
-    (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
-    (add-to-list 'auto-mode-alist '("/\\(views\\|html\\|templates\\)/.*\\.php\\'" . web-mode))
-    (add-to-list 'auto-mode-alist '("\\.*tt\\'" . web-mode))
-    (add-to-list 'auto-mode-alist '("\\.*tt2\\'" . web-mode))
-    (add-to-list 'auto-mode-alist '("\\.nqp\\'" . perl6-mode))
-    (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
-    (add-to-list 'auto-mode-alist '("\\.puml\\'" . puml-mode))
-    (add-to-list 'auto-mode-alist '("\\.plantuml\\'" . puml-mode))
+    (add-to-list 'auto-mode-alist
+                 '(("\\.pdf\\'" . pdf-tools-install)
+                   ("\\.cpp$" . c++-mode)
+                   ("\\.hpp$" . c++-mode)
+                   ("\\.tpp$" . c++-mode)
+                   ("\\.psgi$" . cperl-mode)
+                   ("\\.t\\'"  . cperl-mode)
+                   ("cpanfile" . cperl-mode)
+                   ("\\.phtml\\'" . web-mode)
+                   ("\\.inc\\'" . web-mode)
+                   ("\\.tpl\\'" . web-mode)
+                   ("\\.php\\'" . php-mode)
+                   ("\\.blade\\.php\\'" . web-mode)
+                   ("\\.jsp\\'" . web-mode)
+                   ("\\.as[cp]x\\'" . web-mode)
+                   ("\\.erb\\'" . web-mode)
+                   ("\\.mustache\\'" . web-mode)
+                   ("\\.djhtml\\'" . web-mode)
+                   ("\\.*tpl\\'" . web-mode)
+                   ("\\.*tml\\'" . web-mode)
+                   ("\\.html?\\'" . web-mode)
+                   ("/\\(views\\|html\\|templates\\)/.*\\.php\\'" . web-mode)
+                   ("\\.*tt\\'" . web-mode)
+                   ("\\.*tt2\\'" . web-mode)
+                   ("\\.nqp\\'" . perl6-mode)
+                   ("\\.js\\'" . js2-mode)
+                   ("\\.puml\\'" . puml-mode)
+                   ("\\.plantuml\\'" . puml-mode)))
   #+END_SRC
 
 * Convenience
@@ -98,14 +99,9 @@
   Some usefull defaults
   #+BEGIN_SRC emacs-lisp
     (setq auto-revert-interval 1            ; Refresh buffers fast
-          custom-file (make-temp-file "")   ; Discard customization's
-          default-input-method "TeX"        ; Use TeX when toggling input method
-          echo-keystrokes 0.1               ; Show keystrokes asap
           inhibit-startup-message t         ; No splash screen please
           initial-scratch-message nil       ; Clean scratch buffer
-          recentf-max-saved-items 100       ; Show more recent files
           ring-bell-function 'ignore        ; Quiet
-          sentence-end-double-space nil     ; No double space
           set-language-environment "UTF-8") ; utf8 everywhere
   #+END_SRC
 
@@ -115,17 +111,6 @@
       :ensure t
       :config
       (which-key-mode 1))
-  #+END_SRC
-
-  Expand region for selecting regions
-  #+BEGIN_SRC emacs-lisp
-    (use-package expand-region
-      :ensure t
-      :bind (("C-M-<space>" . er/expand-region)))
-  #+END_SRC
-
-  #+BEGIN_SRC emacs-lisp
-    ;; (add-hook 'before-save-hook 'delete-trailing-whitespace)
   #+END_SRC
 
 * Appearance
@@ -165,15 +150,6 @@
       (projectile-mode 1))
   #+END_SRC
 
-  Project explorer, rarely used
-  #+BEGIN_SRC emacs-lisp
-    (use-package neotree
-      :ensure t
-      :config
-      (global-set-key [f2] 'neotree-toggle)
-      (setq neo-theme (if (display-graphic-p) 'icons 'arrow)))
-  #+END_SRC
-
   Diff directories, projects and stuff
   #+BEGIN_SRC emacs-lisp
     (use-package ztree
@@ -189,21 +165,15 @@
       :config
       (ivy-mode 1)
       ;; add ‘recentf-mode’ and bookmarks to ‘ivy-switch-buffer’.
-      (setq ivy-use-virtual-buffers t)
-      ;; number of result lines to display
-      (setq ivy-height 30)
-      ;; no regexp by default
-      (setq ivy-initial-inputs-alist nil)
-      (setq magit-completing-read-function 'ivy-completing-read)
-      (setq completion-in-region-function 'ivy-completion-in-region)
-      ;; configure regexp engine.
-      (setq ivy-re-builders-alist
-            ;; allow input not in order
-            '((t   . ivy--regex-ignore-order)))
-      (define-key ivy-mode-map (kbd "C-'") 'ivy-avy))
+      (setq ivy-use-virtual-buffers t
+            ivy-height 30
+            ivy-initial-inputs-alist nil ; no regexp by default
+            magit-completing-read-function 'ivy-completing-read
+            completion-in-region-function 'ivy-completion-in-region
+            ivy-re-builders-alist '((t   . ivy--regex-ignore-order))))
   #+END_SRC
 
-  replacement for helm-swoop
+  Fuzzy search in current buffer, selection in the minibuffer
   #+BEGIN_SRC emacs-lisp
     (use-package swiper
       :ensure t
@@ -211,7 +181,7 @@
       :bind (("M-o" . swiper)))
   #+END_SRC
 
-  smex for M-x ranking
+  =smex= ranks the importance of selections after M-x
   #+BEGIN_SRC emacs-lisp
     (use-package smex
       :ensure t
@@ -220,7 +190,7 @@
       (setq smex-completion-method 'ivy))
   #+END_SRC
 
-  use counsel as well
+  Use =counsel= as well
   #+BEGIN_SRC emacs-lisp
     (use-package counsel
       :ensure t
@@ -228,13 +198,12 @@
       :bind (("C-c h" . counsel-descbinds)
              ("M-x" . counsel-M-x)
              ("M-y" . counsel-yank-pop)
-             ("C-c C-r" . counsel-recentf)
              ("M-p" . ag-project)
              ("C-c l" . counsel-locate)
              ("C-x C-f" . counsel-find-file)))
   #+END_SRC
 
-  let ivy interface with projectile
+  Let =ivy= interface with projectile
   #+BEGIN_SRC emacs-lisp
     (use-package counsel-projectile
       :ensure t
@@ -242,6 +211,7 @@
       (counsel-projectile-on))
   #+END_SRC
 
+  Show more information in the minibuffer when using =ivy=
   #+BEGIN_SRC emacs-lisp
     (use-package ivy-rich
       :ensure t
@@ -265,7 +235,6 @@
             company-selection-wrap-around t
             company-transformers '(company-sort-by-occurrence
                                    company-sort-by-backend-importance))
-      (define-key company-mode-map (kbd "C-TAB") 'counsel-company)
       (global-company-mode))
   #+END_SRC
 
@@ -307,7 +276,6 @@
       :ensure t
       :config
       (global-flycheck-mode))
-
   #+END_SRC
 
   =flyspell= as spell checker interace together
@@ -475,16 +443,8 @@
 
   #+BEGIN_SRC emacs-lisp
     (defun setup-tide-mode ()
-      (interactive)
       (tide-setup)
-      (flycheck-mode +1)
-      (setq flycheck-check-syntax-automatically '(save mode-enabled))
-      (eldoc-mode +1)
-      (tide-hl-identifier-mode +1)
-      ;; company is an optional dependency. You have to
-      ;; install it separately via package-install
-      ;; `M-x package-install [ret] company`
-      (company-mode +1))
+      (tide-hl-identifier-mode +1))
 
     (use-package tide
       :ensure t
@@ -507,16 +467,14 @@
       :bind (("C-c p" . perltidy-region)
              ("C-c f" . perltidy-defun))
       :config
-    (custom-set-faces
-     '(cperl-hash-face  ((t)))
-     '(cperl-array-face ((t))))
-    (setq
-        cperl-close-paren-offset -4
-        cperl-continued-statement-offset 4
-        cperl-indent-level 4
-        cperl-tab-always-indent t
-        cperl-indent-parens-as-block t)
-    (defalias 'perl-mode 'cperl-mode))
+      (custom-set-faces
+       '(cperl-hash-face  ((t)))
+       '(cperl-array-face ((t))))
+      (setq cperl-close-paren-offset -4
+            cperl-continued-statement-offset 4
+            cperl-indent-level 4
+            cperl-tab-always-indent t
+            cperl-indent-parens-as-block t))
   #+END_SRC
 
   custom =flycheck= checkers to work in carton environment
@@ -569,26 +527,8 @@
     (use-package flycheck-perl6
       :ensure t)
   #+END_SRC
-
+  
 * Search and Replace
-  =anzu= provides nice visual help during replacing files
-  #+BEGIN_SRC emacs-lisp
-    (use-package anzu
-      :ensure t
-      :config
-      (setq anzu-mode-lighter ""
-            anzu-deactivate-region t
-            anzu-search-threshold 1000
-            anzu-replace-threshold 50
-            anzu-replace-to-string-separator " => ")
-      (set-face-attribute 'anzu-mode-line nil
-                          :foreground "yellow" :weight 'bold)
-      ;(global-anzu-mode +1)
-      (global-set-key (kbd "C-c q") 'anzu-query-replace)
-      (global-set-key (kbd "C-c r") 'anzu-query-replace-regexp))
-
-  #+END_SRC
-
   ag/the_silver_searcher standalone and with helm
   #+BEGIN_SRC emacs-lisp
     (use-package ag
@@ -597,12 +537,6 @@
   #+END_SRC
 
 * LaTeX
-  Auctex as package for LaTeX
-  #+BEGIN_SRC emacs-lisp
-    ;(use-package auctex
-      ;:ensure t)
-  #+END_SRC
-
   =company-auctex= for latex completion
   #+BEGIN_SRC emacs-lisp
     (use-package company-auctex
@@ -655,12 +589,6 @@
       :ensure t
       :config
       (add-to-list 'company-backends 'company-irony))
-
-    ;; (use-package flycheck-irony
-    ;;   :ensure t
-    ;;   :config
-    ;;   (eval-after-load 'flycheck
-    ;;     '(add-hook 'flycheck-mode-hook #'flycheck-irony-setup)))
   #+END_SRC
 
   Major mode for =CMakeLists.txt= files
@@ -687,18 +615,6 @@
         (setq cmake-ide-build-dir dir)))
   #+END_SRC
 
-  Use googles cpp lint checker
-  #+BEGIN_SRC emacs-lisp
-    ;; (use-package flycheck-google-cpplint
-    ;;   :ensure t
-    ;;   :config
-    ;;   (setq flycheck-googlelint-verbose "3"
-    ;;         flycheck-googlelint-filter "-whitespace,+whitespace/braces"
-    ;;         flycheck-googlelint-root "/usr/bin/cpplint"
-    ;;         flycheck-googlelint-linelength "120"))
-  #+END_SRC
-
-
   flycheck c++ standard
   #+BEGIN_SRC emacs-lisp
     (add-hook 'c++-mode-hook (lambda () (setq flycheck-clang-language-standard "c++11")))
@@ -721,19 +637,13 @@
 
 * Python
   =jedi= for navigation and auto completion
-
   #+BEGIN_SRC emacs-lisp
-    (use-package jedi
-      :ensure t
-      :config
-      (add-hook 'python-mode-hook 'jedi:setup))
-
     (defun my/python-mode-hook ()
       (add-to-list 'company-backends 'company-jedi))
     (use-package company-jedi
-                 :ensure t
-                 :config 
-                 (add-hook 'python-mode-hook 'my/python-mode-hook))
+      :ensure t
+      :config 
+      (add-hook 'python-mode-hook 'my/python-mode-hook))
   #+END_SRC
 
   Use =python-mode= as major mode for python
@@ -809,11 +719,11 @@
                nil
                nil)))
       (setq org-capture-templates
-            '(("t" "Todo" entry (file+headline "~/Dropbox/org/index.org" "New Tasks")
+            '(("t" "Todo" entry (file "~/Dropbox/org/index.org" "")
                "* TODO %?\n"))))
   #+END_SRC
 
-  done yesterday
+  Done yesterday
   #+BEGIN_SRC emacs-lisp
     (defun org-todo-with-date (&optional arg)
       (interactive "P")
@@ -854,26 +764,9 @@
 
   #+END_SRC
 
-  nice reminder
+  Make black color themes work nicely when exported to html
   #+BEGIN_SRC emacs-lisp
-    (use-package org-alert
-      :ensure t
-      :config
-      (setq org-alert-interval 1800)
-      (setq alert-default-style 'libnotify))
-  #+END_SRC
-
-  journal
-  #+BEGIN_SRC emacs-lisp
-    (use-package org-journal
-      :ensure t
-      :config
-      (setq org-journal-dir "~/.journal")
-      (setq org-journal-file-format "%Y-%m-%d.org"))
-  #+END_SRC
-
-  #+BEGIN_SRC emacs-lisp
-    (defun eos/org-inline-css-hook (exporter)
+    (defun org-inline-css-hook (exporter)
       "Insert custom inline css to automatically set the
      background of code to whatever theme I'm using's background"
       (when (eq exporter 'html)
@@ -886,7 +779,7 @@
             (format
              "<style type=\"text/css\">\n pre.src {background-color: %s; color: %s;}</style>\n"
              my-pre-bg my-pre-fg))))))
-    (add-hook 'org-export-before-processing-hook #'eos/org-inline-css-hook)
+    (add-hook 'org-export-before-processing-hook #'org-inline-css-hook)
   #+END_SRC
 
 * Git
@@ -897,7 +790,7 @@
       :bind (("C-x g" . magit-status)))
   #+END_SRC
 
-  show commit message of line
+  Show commit message of line
   #+BEGIN_SRC emacs-lisp
     (use-package git-messenger
       :ensure t
@@ -906,7 +799,7 @@
       (setq git-messenger:use-magit-popup t))
   #+END_SRC
 
-  show changes in buffer
+  Show changes in buffer
   #+BEGIN_SRC emacs-lisp
     (use-package git-gutter+
       :ensure t)
@@ -966,12 +859,6 @@
       :config
       (global-set-key (kbd "C-c t") 'google-translate-at-point)
       (global-set-key (kbd "C-c T") 'google-translate-query-translate))
-  #+END_SRC
-* Images
-  for images resizing
-  #+BEGIN_SRC emacs-lisp
-    (use-package image-file
-      :init (auto-image-file-mode))
   #+END_SRC
 * Scala
   #+BEGIN_SRC emacs-lisp
@@ -1155,6 +1042,7 @@
         "s" 'org-schedule
         "r" 'org-toggle-latex-fragment
         "d" 'org-deadline
+        "D" 'org-todo-with-date
         "$" 'org-archive-subtree
         "c" 'org-set-category-property
         "P" 'org-set-property
@@ -1286,6 +1174,11 @@
     ("M-w" . avy-goto-word-1)))
 #+END_SRC
 
+#+BEGIN_SRC emacs-lisp  
+  (use-package ggtags
+    :ensure t)
+#+END_SRC
+
 * gnus, mail, ...
   #+BEGIN_SRC emacs-lisp
     (use-package gnus
@@ -1340,3 +1233,12 @@
     (use-package highlight-symbol
       :ensure t)
   #+END_SRC
+* paredit
+#+BEGIN_SRC emacs-lisp
+  (use-package paredit
+    :ensure t
+    :config
+    (add-hook 'emacs-lisp-mode-hook
+              (lambda ()
+                (paredit-mode t))))
+#+END_SRC
