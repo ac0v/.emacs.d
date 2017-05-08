@@ -41,34 +41,33 @@
 * File-to-Mode mapping
   Define via filename or extension the major mode for editing
   #+BEGIN_SRC emacs-lisp
-    (add-to-list 'auto-mode-alist
-                 '(("\\.pdf\\'" . pdf-tools-install)
-                   ("\\.cpp$" . c++-mode)
-                   ("\\.hpp$" . c++-mode)
-                   ("\\.tpp$" . c++-mode)
-                   ("\\.psgi$" . cperl-mode)
-                   ("\\.t\\'"  . cperl-mode)
-                   ("cpanfile" . cperl-mode)
-                   ("\\.phtml\\'" . web-mode)
-                   ("\\.inc\\'" . web-mode)
-                   ("\\.tpl\\'" . web-mode)
-                   ("\\.php\\'" . php-mode)
-                   ("\\.blade\\.php\\'" . web-mode)
-                   ("\\.jsp\\'" . web-mode)
-                   ("\\.as[cp]x\\'" . web-mode)
-                   ("\\.erb\\'" . web-mode)
-                   ("\\.mustache\\'" . web-mode)
-                   ("\\.djhtml\\'" . web-mode)
-                   ("\\.*tpl\\'" . web-mode)
-                   ("\\.*tml\\'" . web-mode)
-                   ("\\.html?\\'" . web-mode)
-                   ("/\\(views\\|html\\|templates\\)/.*\\.php\\'" . web-mode)
-                   ("\\.*tt\\'" . web-mode)
-                   ("\\.*tt2\\'" . web-mode)
-                   ("\\.nqp\\'" . perl6-mode)
-                   ("\\.js\\'" . js2-mode)
-                   ("\\.puml\\'" . puml-mode)
-                   ("\\.plantuml\\'" . puml-mode)))
+    (add-to-list 'auto-mode-alist '("\\.pdf\\'" . pdf-tools-install))
+    (add-to-list 'auto-mode-alist '("\\.cpp$" . c++-mode))
+    (add-to-list 'auto-mode-alist '("\\.hpp$" . c++-mode))
+    (add-to-list 'auto-mode-alist '("\\.tpp$" . c++-mode))
+    (add-to-list 'auto-mode-alist '("\\.psgi$" . cperl-mode))
+    (add-to-list 'auto-mode-alist '("\\.t\\'"  . cperl-mode))
+    (add-to-list 'auto-mode-alist '("cpanfile" . cperl-mode))
+    (add-to-list 'auto-mode-alist '("\\.phtml\\'" . web-mode))
+    (add-to-list 'auto-mode-alist '("\\.inc\\'" . web-mode))
+    (add-to-list 'auto-mode-alist '("\\.tpl\\'" . web-mode))
+    (add-to-list 'auto-mode-alist '("\\.php\\'" . php-mode))
+    (add-to-list 'auto-mode-alist '("\\.blade\\.php\\'" . web-mode))
+    (add-to-list 'auto-mode-alist '("\\.jsp\\'" . web-mode))
+    (add-to-list 'auto-mode-alist '("\\.as[cp]x\\'" . web-mode))
+    (add-to-list 'auto-mode-alist '("\\.erb\\'" . web-mode))
+    (add-to-list 'auto-mode-alist '("\\.mustache\\'" . web-mode))
+    (add-to-list 'auto-mode-alist '("\\.djhtml\\'" . web-mode))
+    (add-to-list 'auto-mode-alist '("\\.*tpl\\'" . web-mode))
+    (add-to-list 'auto-mode-alist '("\\.*tml\\'" . web-mode))
+    (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
+    (add-to-list 'auto-mode-alist '("/\\(views\\|html\\|templates\\)/.*\\.php\\'" . web-mode))
+    (add-to-list 'auto-mode-alist '("\\.*tt\\'" . web-mode))
+    (add-to-list 'auto-mode-alist '("\\.*tt2\\'" . web-mode))
+    (add-to-list 'auto-mode-alist '("\\.nqp\\'" . perl6-mode))
+    (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
+    (add-to-list 'auto-mode-alist '("\\.puml\\'" . puml-mode))
+    (add-to-list 'auto-mode-alist '("\\.plantuml\\'" . puml-mode))
   #+END_SRC
 
 * Convenience
@@ -235,6 +234,7 @@
             company-selection-wrap-around t
             company-transformers '(company-sort-by-occurrence
                                    company-sort-by-backend-importance))
+      (add-to-list 'company-backends 'company-ispell)
       (global-company-mode))
   #+END_SRC
 
@@ -1038,6 +1038,8 @@
       :config
       (global-evil-leader-mode)
       (evil-leader/set-leader "<SPC>")
+      (evil-leader/set-key-for-mode 'emacs-lisp-mode
+        "x" 'eval-defun)
       (evil-leader/set-key-for-mode 'org-mode 
         "s" 'org-schedule
         "r" 'org-toggle-latex-fragment
