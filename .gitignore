@@ -25,3 +25,13 @@ init.el
 /eshell/lastdir
 /.org-id-locations
 /project-to-org-filepath
+.python-environments
+.tutor
+ibus-el
+lisp
+project-explorer-cache
+pyim
+request
+semanticdb
+tramp
+tutorial
