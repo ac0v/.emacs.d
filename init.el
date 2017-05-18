@@ -194,7 +194,8 @@
   ;; add ‘recentf-mode’ and bookmarks to ‘ivy-switch-buffer’.
   (setq ivy-use-virtual-buffers t
         ivy-height 30
-        ivy-initial-inputs-alist nil ; no regexp by default
+	recentf-max-saved-items 100  ; Show more recent files
+	ivy-initial-inputs-alist nil ; no regexp by default
         magit-completing-read-function 'ivy-completing-read
         completion-in-region-function 'ivy-completion-in-region
         ivy-re-builders-alist '((t   . ivy--regex-ignore-order)))
