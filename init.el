@@ -727,7 +727,7 @@
         (format
          "<style type=\"text/css\">\n pre.src {background-color: %s; color: %s;}</style>\n"
          my-pre-bg my-pre-fg))))))
-(add-hook 'my/org-export-before-processing-hook #'org-inline-css-hook)
+(add-hook 'my/org-export-before-processing-hook #'my/org-inline-css-hook)
 
 ;; git stuff
 (use-package magit
