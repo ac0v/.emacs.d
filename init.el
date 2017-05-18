@@ -599,7 +599,10 @@
   :config
   (add-hook 'python-mode-hook
             (lambda ()
-              (setq-default tab-width 4))))
+              (setq-default tab-width 4)))
+  (add-hook 'inferior-python-mode-hook
+	    (lambda ()
+	      (company-mode -1))))
 
 ;; go stuff
 (use-package go-mode
