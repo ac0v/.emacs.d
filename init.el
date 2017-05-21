@@ -539,10 +539,9 @@
   (evil-define-key 'normal c++-mode-map (kbd "g r") 'rtags-find-references-at-point)
   (evil-leader/set-key-for-mode 'c++-mode "r" 'rtags-rename-symbol)
   (evil-leader/set-key-for-mode 'c++-mode "a" 'rtags-find-references-at-point)
-  (require 'flycheck-rtags)
   (use-package flycheck-rtags
-    :ensure t))
-
+    :ensure t)
+  (require 'flycheck-rtags))
 
 ;; irony for completion
 (use-package irony
