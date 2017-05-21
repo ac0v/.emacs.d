@@ -147,10 +147,10 @@
 
 ;; don't show bars
 (dolist (mode
-         '(tool-bar-mode                ; No toolbars, more room for text
-           scroll-bar-mode              ; No scroll bars either
-           blink-cursor-mode            ; The blinking cursor gets old
-           menu-bar-mode))              ; No menu-bar
+	 '(tool-bar-mode                ; No toolbars, more room for text
+	   scroll-bar-mode              ; No scroll bars either
+	   blink-cursor-mode            ; The blinking cursor gets old
+	   menu-bar-mode))              ; No menu-bar
   (funcall mode 0))
 
 ;; theme
@@ -192,12 +192,12 @@
   (ivy-mode 1)
   ;; add ‘recentf-mode’ and bookmarks to ‘ivy-switch-buffer’.
   (setq ivy-use-virtual-buffers t
-        ivy-height 30
+	ivy-height 30
 	recentf-max-saved-items 100  ; Show more recent files
 	ivy-initial-inputs-alist nil ; no regexp by default
-        magit-completing-read-function 'ivy-completing-read
-        completion-in-region-function 'ivy-completion-in-region
-        ivy-re-builders-alist '((t   . ivy--regex-ignore-order)))
+	magit-completing-read-function 'ivy-completing-read
+	completion-in-region-function 'ivy-completion-in-region
+	ivy-re-builders-alist '((t   . ivy--regex-ignore-order)))
 
   ;; more information in minibuffer
   (use-package ivy-rich
@@ -205,7 +205,7 @@
     :config
     (ivy-set-display-transformer 'ivy-switch-buffer 'ivy-rich-switch-buffer-transformer)
     (setq ivy-virtual-abbreviate 'full
-          ivy-rich-switch-buffer-align-virtual-buffer t)))
+	  ivy-rich-switch-buffer-align-virtual-buffer t)))
 
 ;; search occurrences in a buffer
 (use-package swiper
@@ -240,13 +240,13 @@
   :ensure t
   :config
   (setq company-idle-delay 0
-        company-echo-delay 0
-        company-dabbrev-downcase nil
-        company-minimum-prefix-length 1
-        ompany-tooltip-limit 20
-        company-selection-wrap-around t
-        company-transformers '(company-sort-by-occurrence
-                               company-sort-by-backend-importance))
+	company-echo-delay 0
+	company-dabbrev-downcase nil
+	company-minimum-prefix-length 1
+	ompany-tooltip-limit 20
+	company-selection-wrap-around t
+	company-transformers '(company-sort-by-occurrence
+			       company-sort-by-backend-importance))
   (add-to-list 'company-backends 'company-ispell)
   (global-company-mode)
 
@@ -266,7 +266,7 @@
     :config
     (with-eval-after-load 'company
       (add-hook 'company-mode-hook (lambda ()
-                                     (add-to-list 'company-backends 'company-capf)))
+				     (add-to-list 'company-backends 'company-capf)))
       (company-flx-mode +1)))
   ;; web completion
   (use-package company-web
@@ -301,22 +301,22 @@
   "Renames both current buffer and file it's visiting to NEW-NAME."
   (interactive "sNew name: ")
   (let ((name (buffer-name))
-        (filename (buffer-file-name)))
+	(filename (buffer-file-name)))
     (if (not filename)
-        (message "Buffer '%s' is not visiting a file!" name)
+	(message "Buffer '%s' is not visiting a file!" name)
       (if (get-buffer new-name)
-          (message "A buffer named '%s' already exists!" new-name)
-        (progn
-          (rename-file name new-name 1)
-          (rename-buffer new-name)
-          (set-visited-file-name new-name)
-          (set-buffer-modified-p nil))))))
+	  (message "A buffer named '%s' already exists!" new-name)
+	(progn
+	  (rename-file name new-name 1)
+	  (rename-buffer new-name)
+	  (set-visited-file-name new-name)
+	  (set-buffer-modified-p nil))))))
 
 (defun my/kill-other-buffers ()
   "Kill all other buffers."
   (interactive)
   (mapc 'kill-buffer
-        (delq (current-buffer) (buffer-list))))
+	(delq (current-buffer) (buffer-list))))
 
 (defun perltidy-region ()
   "Run perltidy on the current region."
@@ -328,7 +328,7 @@
   "Run perltidy on the current defun."
   (interactive)
   (save-excursion (mark-defun)
-                  (perltidy-region)))
+		  (perltidy-region)))
 
 (defun toggle-maximize-buffer ()
   "Maximize buffer"
@@ -347,9 +347,9 @@
       (narrow-to-region beg end)
       (goto-char (point-min))
       (let ;; To make `end-of-line' and etc. to ignore fields.
-          ((inhibit-field-text-motion t))
-        (sort-subr nil 'forward-line 'end-of-line nil nil
-                   (lambda (s1 s2) (eq (random 2) 0)))))))
+	  ((inhibit-field-text-motion t))
+	(sort-subr nil 'forward-line 'end-of-line nil nil
+		   (lambda (s1 s2) (eq (random 2) 0)))))))
 
 ;; interact with browser
 (use-package skewer-mode
@@ -366,22 +366,22 @@
   :defer t
   :config
   (setq-default web-mode-enable-auto-pairing t
-                web-mode-enable-auto-opening t
-                web-mode-enable-auto-indentation t
-                web-mode-enable-block-face t
-                web-mode-enable-part-face t
-                web-mode-enable-comment-keywords t
-                web-mode-enable-css-colorization t
-                web-mode-enable-current-element-highlight t
-                web-mode-enable-heredoc-fontification t
-                web-mode-enable-engine-detection t
-                web-mode-markup-indent-offset 2
-                web-mode-css-indent-offset 2
-                web-mode-code-indent-offset 2
-                web-mode-style-padding 2
-                web-mode-script-padding 2
-                web-mode-block-padding 0
-                web-mode-comment-style 2)
+		web-mode-enable-auto-opening t
+		web-mode-enable-auto-indentation t
+		web-mode-enable-block-face t
+		web-mode-enable-part-face t
+		web-mode-enable-comment-keywords t
+		web-mode-enable-css-colorization t
+		web-mode-enable-current-element-highlight t
+		web-mode-enable-heredoc-fontification t
+		web-mode-enable-engine-detection t
+		web-mode-markup-indent-offset 2
+		web-mode-css-indent-offset 2
+		web-mode-code-indent-offset 2
+		web-mode-style-padding 2
+		web-mode-script-padding 2
+		web-mode-block-padding 0
+		web-mode-comment-style 2)
   (custom-set-faces
    '(web-mode-html-tag-face
      ((t (:foreground "#729fcf"))))
@@ -391,22 +391,22 @@
      ((t (:foreground "#FF8A4B"))))
    '(web-mode-current-element-highlight-face
      ((t (:background "#000000"
-                      :foreground "#FF8A4B")))))
+		      :foreground "#FF8A4B")))))
   (define-key helm-map (kbd "C-c C-e") 'web-mode-element-close)
   (add-hook 'web-mode-hook
-            '(lambda ()
-               (local-set-key (kbd "RET") 'newline-and-indent)
-               (setq smartparens-mode nil)))
+	    '(lambda ()
+	       (local-set-key (kbd "RET") 'newline-and-indent)
+	       (setq smartparens-mode nil)))
   (add-hook 'web-mode-before-auto-complete-hooks
-            '(lambda ()
-               (let ((web-mode-cur-language
-                      (web-mode-language-at-pos)))
-                 (if (string= web-mode-cur-language "php")
-                     (yas-activate-extra-mode 'php-mode)
-                   (yas-deactivate-extra-mode 'php-mode))
-                 (if (string= web-mode-cur-language "css")
-                     (setq emmet-use-css-transform t)
-                   (setq emmet-use-css-transform nil))))))
+	    '(lambda ()
+	       (let ((web-mode-cur-language
+		      (web-mode-language-at-pos)))
+		 (if (string= web-mode-cur-language "php")
+		     (yas-activate-extra-mode 'php-mode)
+		   (yas-deactivate-extra-mode 'php-mode))
+		 (if (string= web-mode-cur-language "css")
+		     (setq emmet-use-css-transform t)
+		   (setq emmet-use-css-transform nil))))))
 
 ;; javascript stuff
 (use-package js2-mode
@@ -434,29 +434,29 @@
 (use-package cperl-mode
   :ensure t
   :bind (("C-c p" . perltidy-region)
-         ("C-c f" . perltidy-defun))
+	 ("C-c f" . perltidy-defun))
   :config
   (custom-set-faces
    '(cperl-hash-face  ((t)))
    '(cperl-array-face ((t))))
   (setq cperl-close-paren-offset -4
-        cperl-continued-statement-offset 4
-        cperl-indent-level 4
-        cperl-tab-always-indent t
-        cperl-indent-parens-as-block t))
+	cperl-continued-statement-offset 4
+	cperl-indent-level 4
+	cperl-tab-always-indent t
+	cperl-indent-parens-as-block t))
 
 ;; checker that also integrates carton modules
 (flycheck-define-checker my-perl
   "A Perl syntax checker using the Perl interpreter."
   :command ("~/perl5/perlbrew/perls/perl-5.24.0/bin/perl" "-w" "-c"
-            (eval (let ((options '()))
-                    (when (projectile-project-p)
-                      (push (concat "-I" (projectile-project-root)) options)
-                      (push (concat "-I" (projectile-expand-root "lib")) options)
-                      (when (projectile-verify-file "cpanfile")
-                        (push (concat "-I" (projectile-expand-root "local/lib/perl5")) options))
-                      options)))
-            source)
+	    (eval (let ((options '()))
+		    (when (projectile-project-p)
+		      (push (concat "-I" (projectile-project-root)) options)
+		      (push (concat "-I" (projectile-expand-root "lib")) options)
+		      (when (projectile-verify-file "cpanfile")
+			(push (concat "-I" (projectile-expand-root "local/lib/perl5")) options))
+		      options)))
+	    source)
   :error-patterns ((error line-start (minimal-match (message)) " at " (file-name) " line " line (or "." (and ", " (zero-or-more not-newline))) line-end))
   :modes (perl-mode cperl-mode)
   :next-checkers (my-perl-perlcritic))
@@ -464,11 +464,11 @@
 (flycheck-define-checker my-perl-perlcritic
   "A Perl syntax checker using Perl::Critic."
   :command ("perlcritic" "--no-color" "--verbose" "%f:%l:%c:%s:%m (%e)\n"
-            (option "--severity" flycheck-perlcritic-verbosity flycheck-option-int)
-            source-original)
+	    (option "--severity" flycheck-perlcritic-verbosity flycheck-option-int)
+	    source-original)
   :error-patterns ((info    line-start (file-name) ":" line ":" column ":" (any "1")   ":" (message) line-end)
-                   (warning line-start (file-name) ":" line ":" column ":" (any "234") ":" (message) line-end)
-                   (error   line-start (file-name) ":" line ":" column ":" (any "5")   ":" (message) line-end))
+		   (warning line-start (file-name) ":" line ":" column ":" (any "234") ":" (message) line-end)
+		   (error   line-start (file-name) ":" line ":" column ":" (any "5")   ":" (message) line-end))
   :modes (cperl-mode perl-mode))
 
 (add-to-list 'flycheck-checkers 'my-perl)
@@ -600,8 +600,8 @@
   :bind (("C-c C-c" . python-shell-send-buffer))
   :config
   (add-hook 'python-mode-hook
-            (lambda ()
-              (setq-default tab-width 4)))
+	    (lambda ()
+	      (setq-default tab-width 4)))
   (add-hook 'inferior-python-mode-hook
 	    (lambda ()
 	      (company-mode -1))))
@@ -617,14 +617,14 @@
   :ensure t
   :config
   (add-hook 'go-mode-hook
-            (lambda ()
-              (set (make-local-variable 'company-backends) '(company-go)))))
+	    (lambda ()
+	      (set (make-local-variable 'company-backends) '(company-go)))))
 
 ;; org for everything
 (use-package org
   :ensure t
   :bind (("C-c c" . org-capture)
-         ("C-c a" . org-agenda))
+	 ("C-c a" . org-agenda))
   :config
   (evil-leader/set-key-for-mode 'org-mode
     "s" 'org-schedule
@@ -646,17 +646,17 @@
   (setq org-habit-show-habits-only-for-today t)
   (setq org-habit-graph-column 80)
   (setq org-todo-keywords
-        (quote ((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
-                (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)" "PHONE" "MEETING"))))
+	(quote ((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
+		(sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)" "PHONE" "MEETING"))))
   (setq org-todo-keyword-faces
-        (quote (("TODO" :foreground "red" :weight bold)
-                ("NEXT" :foreground "blue" :weight bold)
-                ("DONE" :foreground "forest green" :weight bold)
-                ("WAITING" :foreground "orange" :weight bold)
-                ("HOLD" :foreground "magenta" :weight bold)
-                ("CANCELLED" :foreground "forest green" :weight bold)
-                ("MEETING" :foreground "forest green" :weight bold)
-                ("PHONE" :foreground "forest green" :weight bold))))
+	(quote (("TODO" :foreground "red" :weight bold)
+		("NEXT" :foreground "blue" :weight bold)
+		("DONE" :foreground "forest green" :weight bold)
+		("WAITING" :foreground "orange" :weight bold)
+		("HOLD" :foreground "magenta" :weight bold)
+		("CANCELLED" :foreground "forest green" :weight bold)
+		("MEETING" :foreground "forest green" :weight bold)
+		("PHONE" :foreground "forest green" :weight bold))))
   (setq org-src-fontify-natively t)
   (setq org-src-tab-acts-natively t)
   (setq org-src-tab-acts-natively t)
@@ -664,32 +664,32 @@
   (setq org-default-notes-file (concat org-directory "~/Dropbox/org/notes.org"))
   (setq org-src-tab-acts-natively t)
   (setq org-agenda-custom-commands
-        '(
-          ("h" "Daily habits"
-           ((agenda ""))
-           ((org-agenda-show-log t)
-            (org-agenda-ndays 7)
-            (org-agenda-log-mode-items '(state))
-            (org-agenda-skip-function '(org-agenda-skip-entry-if 'notregexp ":DAILY:"))))
-          ("c" . "My Custom Agendas")
-          ("cu" "Unscheduled TODO"
-           ((todo ""
-                  ((org-agenda-overriding-header "\nUnscheduled TODO")
-                   (org-agenda-skip-function '(org-agenda-skip-entry-if 'timestamp)))))
-           nil
-           nil)))
+	'(
+	  ("h" "Daily habits"
+	   ((agenda ""))
+	   ((org-agenda-show-log t)
+	    (org-agenda-ndays 7)
+	    (org-agenda-log-mode-items '(state))
+	    (org-agenda-skip-function '(org-agenda-skip-entry-if 'notregexp ":DAILY:"))))
+	  ("c" . "My Custom Agendas")
+	  ("cu" "Unscheduled TODO"
+	   ((todo ""
+		  ((org-agenda-overriding-header "\nUnscheduled TODO")
+		   (org-agenda-skip-function '(org-agenda-skip-entry-if 'timestamp)))))
+	   nil
+	   nil)))
   (setq org-capture-templates
-        '(("t" "Todo" entry (file "~/Dropbox/org/index.org" "")
-           "* TODO %?\n"))))
+	'(("t" "Todo" entry (file "~/Dropbox/org/index.org" "")
+	   "* TODO %?\n"))))
 
 
 ;; select date when todo changed state
 (defun my/org-todo-with-date (&optional arg)
   (interactive "P")
   (cl-letf* ((org-read-date-prefer-future nil)
-             (my-current-time (org-read-date t t nil "when:" nil nil nil))
-             ((symbol-function #'org-current-effective-time)
-              #'(lambda () my-current-time)))
+	     (my-current-time (org-read-date t t nil "when:" nil nil nil))
+	     ((symbol-function #'org-current-effective-time)
+	      #'(lambda () my-current-time)))
     (org-todo arg)))
 
 ;; nice html/js slides
@@ -711,7 +711,7 @@
 ;; capture for projects
 (use-package org-projectile
   :bind (("C-c n p" . org-projectile:project-todo-completing-read)
-         ("C-c c" . org-capture))
+	 ("C-c c" . org-capture))
   :config
   :ensure t)
 
@@ -721,14 +721,14 @@
      background of code to whatever theme I'm using's background"
   (when (eq exporter 'html)
     (let* ((my-pre-bg (face-background 'default))
-           (my-pre-fg (face-foreground 'default)))
+	   (my-pre-fg (face-foreground 'default)))
       (setq
        org-html-head-extra
        (concat
-        org-html-head-extra
-        (format
-         "<style type=\"text/css\">\n pre.src {background-color: %s; color: %s;}</style>\n"
-         my-pre-bg my-pre-fg))))))
+	org-html-head-extra
+	(format
+	 "<style type=\"text/css\">\n pre.src {background-color: %s; color: %s;}</style>\n"
+	 my-pre-bg my-pre-fg))))))
 (add-hook 'my/org-export-before-processing-hook #'my/org-inline-css-hook)
 
 ;; git stuff
@@ -811,32 +811,32 @@
 (defun my/xah-run-current-file ()
   (interactive)
   (let (
-        (-suffix-map
-         ;; (‹extension› . ‹shell program name›)
-         `(
-           ("php" . "php")
-           ("pl6" . "perl6")
-           ("pl" . "/home/ben/perl5/perlbrew/perls/perl-5.24.0/bin/perl")
-           ("pm" . "/home/ben/perl5/perlbrew/perls/perl-5.24.0/bin/perl")
-           ("py" . "python3")
-           ("rb" . "ruby")
-           ("go" . "go run")
-           ("js" . "node") ; node.js
-           ("sh" . "bash")
-           ("clj" . "java -cp /home/xah/apps/clojure-1.6.0/clojure-1.6.0.jar clojure.main")
-           ("rkt" . "racket")
-           ("ml" . "ocaml")
-           ("vbs" . "cscript")
-           ("tex" . "pdflatex")
-           ("latex" . "pdflatex")
-           ("java" . "javac")
-           ;; ("pov" . "/usr/local/bin/povray +R2 +A0.1 +J1.2 +Am2 +Q9 +H480 +W640")
-           ))
+	(-suffix-map
+	 ;; (‹extension› . ‹shell program name›)
+	 `(
+	   ("php" . "php")
+	   ("pl6" . "perl6")
+	   ("pl" . "/home/ben/perl5/perlbrew/perls/perl-5.24.0/bin/perl")
+	   ("pm" . "/home/ben/perl5/perlbrew/perls/perl-5.24.0/bin/perl")
+	   ("py" . "python3")
+	   ("rb" . "ruby")
+	   ("go" . "go run")
+	   ("js" . "node") ; node.js
+	   ("sh" . "bash")
+	   ("clj" . "java -cp /home/xah/apps/clojure-1.6.0/clojure-1.6.0.jar clojure.main")
+	   ("rkt" . "racket")
+	   ("ml" . "ocaml")
+	   ("vbs" . "cscript")
+	   ("tex" . "pdflatex")
+	   ("latex" . "pdflatex")
+	   ("java" . "javac")
+	   ;; ("pov" . "/usr/local/bin/povray +R2 +A0.1 +J1.2 +Am2 +Q9 +H480 +W640")
+	   ))
 
-        -fname
-        -fSuffix
-        -prog-name
-        -cmd-str)
+	-fname
+	-fSuffix
+	-prog-name
+	-cmd-str)
 
     (when (null (buffer-file-name)) (save-buffer))
     (when (buffer-modified-p) (save-buffer))
@@ -850,14 +850,14 @@
      ((string-equal -fSuffix "el") (load -fname))
      ((string-equal -fSuffix "java")
       (progn
-        (shell-command -cmd-str "*xah-run-current-file output*" )
-        (shell-command
-         (format "java %s" (file-name-sans-extension (file-name-nondirectory -fname))))))
+	(shell-command -cmd-str "*xah-run-current-file output*" )
+	(shell-command
+	 (format "java %s" (file-name-sans-extension (file-name-nondirectory -fname))))))
      (t (if -prog-name
-            (progn
-              (message "Running…")
-              (shell-command -cmd-str "*xah-run-current-file output*" ))
-          (message "No recognized program file suffix for this file."))))))
+	    (progn
+	      (message "Running…")
+	      (shell-command -cmd-str "*xah-run-current-file output*" ))
+	  (message "No recognized program file suffix for this file."))))))
 (global-set-key (kbd "<f5>") 'my/xah-run-current-file)
 
 ;; rust things
@@ -887,9 +887,9 @@
   :config
   (evil-leader/set-key "nf" 'elfeed)
   (setq elfeed-feeds
-        '("http://nullprogram.com/feed/"
-          "http://www.tsinghua.edu.cn/publish/news/rss/all.xml"
-          "http://planet.emacsen.org/atom.xml"))
+	'("http://nullprogram.com/feed/"
+	  "http://www.tsinghua.edu.cn/publish/news/rss/all.xml"
+	  "http://planet.emacsen.org/atom.xml"))
   (add-to-list 'evil-emacs-state-modes 'elfeed-search-mode)
   (add-to-list 'evil-emacs-state-modes 'elfeed-show-mode)
   (add-to-list 'evil-emacs-state-modes 'rtags-mode)
@@ -914,7 +914,7 @@
   (eval-after-load 'evil
     (eval-after-load 'dumb-jump
       (defadvice dumb-jump-go (before dotemacs activate)
-        (evil--jumps-push))))
+	(evil--jumps-push))))
   (define-key evil-normal-state-map (kbd "g D") 'dumb-jump-go))
 
 ;; tags
@@ -940,8 +940,8 @@
   :ensure t
   :config
   (add-hook 'emacs-lisp-mode-hook
-            (lambda ()
-              (paredit-mode t))))
+	    (lambda ()
+	      (paredit-mode t))))
 
 ;; email
 (use-package mu4e
@@ -974,13 +974,13 @@
 
   (require 'smtpmail)
   (setq message-send-mail-function 'smtpmail-send-it
-        starttls-use-gnutls t
-        smtpmail-starttls-credentials '(("mail.cluster-team.com" 587 nil nil))
-        smtpmail-auth-credentials
-        '(("mail.cluster-team.com" 587 "bernhard@specht" nil))
-        smtpmail-default-smtp-server "mail.cluster-team.com"
-        smtpmail-smtp-server "mail.cluster-team.com"
-        smtpmail-smtp-service 587)
+	starttls-use-gnutls t
+	smtpmail-starttls-credentials '(("mail.cluster-team.com" 587 nil nil))
+	smtpmail-auth-credentials
+	'(("mail.cluster-team.com" 587 "bernhard@specht" nil))
+	smtpmail-default-smtp-server "mail.cluster-team.com"
+	smtpmail-smtp-server "mail.cluster-team.com"
+	smtpmail-smtp-service 587)
 
   ;; don't keep message buffers around
   (setq message-kill-buffer-on-exit t))
