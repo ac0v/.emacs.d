@@ -8,7 +8,7 @@
 (defun my/compile-cfg ()
   "compile config if config is saved"
   (when (equal (buffer-file-name)
-               (expand-file-name (concat user-emacs-directory "init.el")))
+	       (expand-file-name (concat user-emacs-directory "init.el")))
     (byte-compile-file (concat user-emacs-directory "init.el"))))
 
 (add-hook 'after-save-hook 'my/compile-cfg)
