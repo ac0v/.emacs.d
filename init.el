@@ -90,7 +90,6 @@
 (server-start)
 
 ;; file to mode mapping
-(add-to-list 'auto-mode-alist '("\\.pdf\\'" . pdf-tools-install))
 (add-to-list 'auto-mode-alist '("\\.cpp$" . c++-mode))
 (add-to-list 'auto-mode-alist '("\\.hpp$" . c++-mode))
 (add-to-list 'auto-mode-alist '("\\.tpp$" . c++-mode))
@@ -504,15 +503,17 @@
   :config
   (company-auctex-init))
 
-;;latex previews
-(use-package latex-preview-pane
-  :ensure t
-  :config
-  (latex-preview-pane-enable))
-
 (add-hook 'LaTeX-mode-hook 'visual-line-mode)
 (add-hook 'LaTeX-mode-hook 'flyspell-mode)
 (add-hook 'LaTeX-mode-hook 'LaTeX-math-mode)
+
+;; latex compilation
+(setq latex-run-command "pdflatex")
+(TeX-PDF-mode t)
+(evil-leader/set-key-for-mode 'latex-mode "x" 'TeX-command-master)
+;; (defun my/compile-latex ()
+;;   (interactive)
+;;   (call-process "pdflatex" (buffer-file-name)))
 
 
 ;; c/c++ stuff
@@ -754,20 +755,6 @@
 ;; show changes in line
 (use-package git-gutter+
   :ensure t)
-
-
-;; default doc view resolution is ugly
-(use-package doc-view
-  :ensure t
-  :config
-  (setq doc-view-resolution 144))
-
-
-;; open pdfs inside emacs
-(use-package pdf-tools
-  ;; :ensure t
-  :config
-  (pdf-tools-install))
 
 ;; frame movement
 (use-package ace-window
