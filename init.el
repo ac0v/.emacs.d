@@ -49,42 +49,50 @@
     (use-package org-evil
       :ensure t
       :config
-      (define-key org-agenda-mode-map "j" 'evil-next-line)
-      (define-key org-agenda-mode-map "k" 'evil-previous-line)
-      (evil-define-key 'normal org-evil-mode-map
-        "-" 'org-cycle-list-bullet
-        "H" 'org-metaleft
-        "J" 'org-metaup
-        "K" 'org-metadown
-        "L" 'org-metaleft))
+      (with-eval-after-load 'company
+	(add-hook 'org-agenda-mode-hook (lambda ()
+					  (define-key org-agenda-mode-map "j" 'evil-next-line)
+					  (define-key org-agenda-mode-map "k" 'evil-previous-line)))
+	(evil-define-key 'normal org-evil-mode-map
+	  "-" 'org-cycle-list-bullet
+	  "H" 'org-metaleft
+	  "J" 'org-metaup
+	  "K" 'org-metadown
+	  "L" 'org-metaleft)))
 
-    (use-package evil-surround
-      :ensure t
-      :config
-      (global-evil-surround-mode 1))
+      (use-package evil-surround
+	:ensure t
+	:config
+	(global-evil-surround-mode 1))
 
-    (use-package evil-nerd-commenter
-      :ensure t
-      :config
-      (evilnc-default-hotkeys))
+      (use-package evil-nerd-commenter
+	:ensure t
+	:config
+	(evil-leader/set-key
+	  "ci" 'evilnc-comment-or-uncomment-lines
+	  "cl" 'evilnc-quick-comment-or-uncomment-to-the-line
+	  "ll" 'evilnc-quick-comment-or-uncomment-to-the-line
+	  "cc" 'evilnc-copy-and-comment-lines
+	  "cp" 'evilnc-comment-or-uncomment-paragraphs
+	  "cr" 'comment-or-uncomment-region))
 
-    (use-package evil-magit
-      :ensure t)
+      (use-package evil-magit
+	:ensure t)
 
-    (use-package evil-cleverparens
-      :ensure t)
+      (use-package evil-cleverparens
+	:ensure t)
 
-    (use-package evil-snipe
-      :ensure t
-      :config
-      (evil-snipe-mode 1)
-      (setq evil-snipe-scope 'whole-visible)
-      (add-hook 'magit-mode-hook 'turn-off-evil-snipe-override-mode))
+      (use-package evil-snipe
+	:ensure t
+	:config
+	(evil-snipe-mode 1)
+	(setq evil-snipe-scope 'whole-visible)
+	(add-hook 'magit-mode-hook 'turn-off-evil-snipe-override-mode))
 
-    (use-package evil-smartparens
-      :ensure t
-      :config
-      (add-hook 'smartparens-enabled-hook #'evil-smartparens-mode))))
+      (use-package evil-smartparens
+	:ensure t
+	:config
+	(add-hook 'smartparens-enabled-hook #'evil-smartparens-mode))))
 
 ;; use emacs as server
 (server-start)
