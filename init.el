@@ -587,12 +587,16 @@
   :config
   (add-hook 'python-mode-hook 'anaconda-mode)
   (evil-define-key 'normal python-mode-map (kbd "g d") 'anaconda-mode-find-definitions)
-  (evil-define-key 'normal c-mode-map (kbd "g r") 'anaconda-mode-find-references)
+  (evil-define-key 'normal python-mode-map (kbd "g r") 'anaconda-mode-find-references)
   (use-package company-anaconda
     :ensure t
     :config
+    (anaconda-eldoc-mode 1)
     (eval-after-load "company"
       '(add-to-list 'company-backends 'company-anaconda))))
+
+;; I hate the help buffer
+(defun py-help-at-point nil)
 
 ;; major mode for python
 (use-package python-mode
