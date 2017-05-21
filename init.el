@@ -955,56 +955,6 @@
 	    (lambda ()
 	      (paredit-mode t))))
 
-;; email
-(use-package mu4e
-  :load-path "/usr/share/emacs/site-lisp/mu4e"
-  :config
-  ;; don't save message to Sent Messages, Gmail/IMAP takes care of this
-  (setq mu4e-sent-messages-behavior 'delete)
-
-  (setq mu4e-maildir "~/Maildir")
-  (setq mu4e-drafts-folder "/Drafts")
-  (setq mu4e-sent-folder   "/Sent")
-  (setq mu4e-trash-folder  "/Trash")
-
-  ;; setup some handy shortcuts
-  ;; you can quickly switch to your Inbox -- press ``ji''
-  ;; then, when you want archive some messages, move them to
-  ;; the 'All Mail' folder by pressing ``ma''.
-
-  ;; allow for updating mail using 'U' in the main view:
-  (setq mu4e-get-mail-command "offlineimap")
-
-  ;; something about ourselves
-  (setq
-   user-mail-address "bernhard@specht"
-   user-full-name  "Bernhard Specht")
-
-  ;; sending mail -- replace USERNAME with your gmail username
-  ;; also, make sure the gnutls command line utils are installed
-  ;; package 'gnutls-bin' in Debian/Ubuntu
-
-  (require 'smtpmail)
-  (setq message-send-mail-function 'smtpmail-send-it
-	starttls-use-gnutls t
-	smtpmail-starttls-credentials '(("mail.cluster-team.com" 587 nil nil))
-	smtpmail-auth-credentials
-	'(("mail.cluster-team.com" 587 "bernhard@specht" nil))
-	smtpmail-default-smtp-server "mail.cluster-team.com"
-	smtpmail-smtp-server "mail.cluster-team.com"
-	smtpmail-smtp-service 587)
-
-  ;; don't keep message buffers around
-  (setq message-kill-buffer-on-exit t))
-(use-package evil-mu4e
-  :ensure t)
-(use-package mu4e-alert
-  :ensure t
-  :config
-  (mu4e-alert-set-default-style 'libnotify)
-  (add-hook 'after-init-hook #'mu4e-alert-enable-notifications)
-  (add-hook 'after-init-hook #'mu4e-alert-enable-mode-line-display))
-
 ;; use chrome to open links
 (setq browse-url-browser-function 'browse-url-generic
       browse-url-generic-program "google-chrome-stable")
