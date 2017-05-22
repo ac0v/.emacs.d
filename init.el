@@ -89,6 +89,11 @@
       (setq evil-snipe-scope 'whole-visible)
       (add-hook 'magit-mode-hook 'turn-off-evil-snipe-override-mode))
 
+    (use-package evil-lion
+      :ensure t
+      :config
+      (evil-lion-mode))
+
     (use-package evil-smartparens
       :ensure t
       :config
