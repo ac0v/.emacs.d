@@ -99,6 +99,11 @@
       :config
       (add-hook 'smartparens-enabled-hook #'evil-smartparens-mode))))
 
+(use-package expand-region
+  :ensure t
+  :config
+  (evil-leader/set-key "<SPC>" 'er/expand-region))
+
 ;; use emacs as server
 (server-start)
 
