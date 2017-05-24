@@ -94,6 +94,11 @@
       :config
       (evil-lion-mode))
 
+    (use-package evil-matchit
+      :ensure t
+      :config
+      (global-evil-matchit-mode))
+
     (use-package evil-smartparens
       :ensure t
       :config
