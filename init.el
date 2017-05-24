@@ -657,7 +657,7 @@
     "s" 'org-schedule
     "r" 'org-toggle-latex-fragment
     "d" 'org-deadline
-    "D" 'org-todo-with-date
+    "D" 'my/org-todo-with-date
     "$" 'org-archive-subtree
     "c" 'org-set-category-property
     "P" 'org-set-property
