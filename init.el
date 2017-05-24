@@ -139,6 +139,7 @@
 (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
 (add-to-list 'auto-mode-alist '("\\.puml\\'" . puml-mode))
 (add-to-list 'auto-mode-alist '("\\.plantuml\\'" . puml-mode))
+(add-to-list 'auto-mode-alist '("\\.launch\\'" . xml-mode))
 
 ;; anser with "y" and "n" instead of "yes" and "no"
 (fset 'yes-or-no-p 'y-or-n-p)
