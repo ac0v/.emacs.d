@@ -970,6 +970,21 @@
 	    (lambda ()
 	      (paredit-mode t))))
 
+;; some tramp stuff
+(setq tramp-default-method "ssh")
+
+(use-package helm-tramp
+  :ensure t)
+
+(defun my/shell-set-hook ()
+  (when (file-remote-p (buffer-file-name))
+    (let ((vec (tramp-dissect-file-name (buffer-file-name))))
+     ;; Please change "some-hostname" to your remote hostname
+      (when (string-match-p "some-hostname" (tramp-file-name-host vec))
+        (setq-local shell-file-name "/usr/local/bin/bash")))))
+
+(add-hook 'find-file-hook #'my/shell-set-hook)
+
 ;; use chrome to open links
 (setq browse-url-browser-function 'browse-url-generic
       browse-url-generic-program "google-chrome-stable")
