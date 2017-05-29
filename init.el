@@ -77,7 +77,10 @@
 	"cr" 'comment-or-uncomment-region))
 
     (use-package evil-magit
-      :ensure t)
+      :ensure t
+	  :config
+	  (evil-leader/set-key
+		"s" 'magit-status))
 
     (use-package evil-cleverparens
       :ensure t)
@@ -254,6 +257,8 @@
 	 ("C-c l" . counsel-locate)
 	 ("C-x C-f" . counsel-find-file))
   :config
+  (evil-leader/set-key
+	"l"  'counsel-locate)
   (use-package counsel-projectile
     :ensure t
     :config
