@@ -85,6 +85,11 @@
     (use-package evil-cleverparens
       :ensure t)
 
+    (use-package evil-exchange
+      :ensure t
+      :config
+      (evil-exchange-install))
+
     (use-package evil-snipe
       :ensure t
       :config
