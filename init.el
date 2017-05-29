@@ -42,9 +42,9 @@
       (global-evil-leader-mode)
       (evil-leader/set-leader "<SPC>")
       (evil-leader/set-key
-	"k"  'kill-this-buffer
-	"e" 'find-file
-	"b" 'switch-to-buffer))
+		"k"  'kill-this-buffer
+		"e" 'find-file
+		"b" 'switch-to-buffer))
 
     (use-package org-evil
       :ensure t
