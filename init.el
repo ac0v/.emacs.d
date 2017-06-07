@@ -46,6 +46,15 @@
 		"e" 'find-file
 		"b" 'switch-to-buffer))
 
+    (use-package evil-org
+      :ensure t
+      :after org
+      :config
+      (add-hook 'org-mode-hook 'evil-org-mode)
+      (add-hook 'evil-org-mode-hook
+		(lambda ()
+		  (evil-org-set-key-theme))))
+
     (use-package org-evil
       :ensure t
       :config
@@ -675,8 +684,7 @@
 
   (evil-leader/set-key
     "oa" 'org-agenda
-    "oc" 'org-capture
-    "oj" 'org-journal-new-entry)
+    "oc" 'org-capture)
 
   (add-hook 'org-capture-mode-hook 'evil-insert-state)
   (setq org-modules (append org-modules '(org-habit)))
