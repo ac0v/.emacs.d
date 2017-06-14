@@ -770,6 +770,7 @@
   :bind (("C-c n p" . org-projectile:project-todo-completing-read)
 	 ("C-c c" . org-capture))
   :config
+  (add-to-list 'org-capture-templates (org-projectile:project-todo-entry))
   :ensure t)
 
 ;; set background correctly if exporting source blocks
