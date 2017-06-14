@@ -769,9 +769,11 @@
 (use-package org-projectile
   :bind (("C-c n p" . org-projectile:project-todo-completing-read)
 	 ("C-c c" . org-capture))
+  :ensure t
   :config
-  (add-to-list 'org-capture-templates (org-projectile:project-todo-entry))
-  :ensure t)
+  (org-projectile:per-repo)
+  (setq org-projectile:per-repo-filename "TODO.org")
+  (setq org-agenda-files (append org-agenda-files (org-projectile:todo-files))))
 
 ;; set background correctly if exporting source blocks
 (defun my/org-inline-css-hook (exporter)
