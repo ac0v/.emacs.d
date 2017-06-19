@@ -323,6 +323,11 @@
     :config
     (add-to-list 'company-backends '(company-web-html))
     (add-to-list 'company-backends '(company-web-jade)))
+
+  (use-package company-quickhelp
+    :ensure t
+    :config
+    (company-quickhelp-mode))
   )
 
 ;; code snippets
