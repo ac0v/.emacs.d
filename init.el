@@ -634,33 +634,48 @@
 ;; python stuff
 
 ;; completion + navigation
-(use-package anaconda-mode
+;; (use-package anaconda-mode
+;;   :ensure t
+;;   :config
+;;   (add-hook 'python-mode-hook 'anaconda-mode)
+;;   (evil-define-key 'normal python-mode-map (kbd "g d") 'anaconda-mode-find-definitions)
+;;   (evil-define-key 'normal python-mode-map (kbd "g r") 'anaconda-mode-find-references)
+;;   (use-package company-anaconda
+;;     :ensure t
+;;     :config
+;;     (anaconda-eldoc-mode 1)
+;;     (eval-after-load "company"
+;;       '(add-to-list 'company-backends 'company-anaconda))))
+
+;; (use-package company-jedi
+;;   :ensure t
+;;   :config
+;;   (evil-define-key 'normal python-mode-map (kbd "g d") 'jedi:goto-definition)
+;;   (eval-after-load "company"
+;;     '(add-to-list 'company-backends 'company-jedi)))
+
+(use-package elpy
   :ensure t
   :config
-  (add-hook 'python-mode-hook 'anaconda-mode)
-  (evil-define-key 'normal python-mode-map (kbd "g d") 'anaconda-mode-find-definitions)
-  (evil-define-key 'normal python-mode-map (kbd "g r") 'anaconda-mode-find-references)
-  (use-package company-anaconda
-    :ensure t
-    :config
-    (anaconda-eldoc-mode 1)
-    (eval-after-load "company"
-      '(add-to-list 'company-backends 'company-anaconda))))
+  (elpy-enable)
+  (evil-define-key 'normal python-mode-map (kbd "g d") 'elpy-goto-definition)
+  (evil-define-key 'normal python-mode-map (kbd "g h") 'elpy-doc)
+  (evil-leader/set-key-for-mode 'python-mode "r" 'elpy-refactor))
 
 ;; I hate the help buffer
 (defun py-help-at-point nil)
 
 ;; major mode for python
-(use-package python-mode
-  :ensure t
-  :bind (("C-c C-c" . python-shell-send-buffer))
-  :config
-  (add-hook 'python-mode-hook
-	    (lambda ()
-	      (setq-default tab-width 4)))
-  (add-hook 'inferior-python-mode-hook
-	    (lambda ()
-	      (company-mode -1))))
+;; (use-package python-mode
+;;   :ensure t
+;;   :bind (("C-c C-c" . python-shell-send-buffer))
+;;   :config
+;;   (add-hook 'python-mode-hook
+;; 	    (lambda ()
+;; 	      (setq-default tab-width 4)))
+;;   (add-hook 'inferior-python-mode-hook
+;; 	    (lambda ()
+;; 	      (company-mode -1))))
 
 ;; go stuff
 (use-package go-mode
