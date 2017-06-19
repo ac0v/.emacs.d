@@ -85,6 +85,11 @@
 	"cp" 'evilnc-comment-or-uncomment-paragraphs
 	"cr" 'comment-or-uncomment-region))
 
+    (use-package evil-avy
+      :ensure t
+      :config
+      (evil-avy-mode))
+
     (use-package evil-magit
       :ensure t
 	  :config
