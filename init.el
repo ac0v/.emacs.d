@@ -30,6 +30,11 @@
   (define-key evil-normal-state-map (kbd "g f") 'imenu)
   (evil-mode 1)
 
+  (use-package evil-mc
+    :ensure t
+    :config
+    (evil-mc-mode  1))
+
   ;; <fd> instead of <escape> to go to normal mode
   (use-package evil-escape
     :ensure t
