@@ -99,9 +99,10 @@
 
     (use-package evil-magit
       :ensure t
-	  :config
-	  (evil-leader/set-key
-		"s" 'magit-status))
+      :config
+      (add-to-list 'evil-insert-state-modes 'magit-log-edit-mode)
+      (evil-leader/set-key
+	"s" 'magit-status))
 
     (use-package evil-cleverparens
       :ensure t)
