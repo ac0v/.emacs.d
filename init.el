@@ -21,6 +21,8 @@
 (require 'use-package)
 
 ;; vim emulation
+(setq evil-search-module 'evil-search)
+
 (use-package evil
   :ensure t
   :config
