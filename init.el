@@ -1059,6 +1059,56 @@
   :init (setq markdown-command "multimarkdown"))
 
 
+(use-package langtool
+  :ensure t
+  :config
+(setq langtool-java-classpath
+      "/usr/share/languagetool:/usr/share/java/languagetool/*")
+  )
+
+(use-package slack
+  :commands (slack-start)
+  :init
+  (setq slack-buffer-emojify t) ;; if you want to enable emoji, default nil
+  (setq slack-prefer-current-team t)
+  :config
+  (slack-register-team
+   :name "nsttalk"
+   :default t
+   :client-id "205145334934.204256453843"
+   :client-secret "a8e2749a46604d68d9bba07346e0186b"
+   :token "oLZ8iIHr7MWuIotxYlzMPqAL"
+   :subscribed-channels '(test-rename rrrrr))
+
+  (evil-define-key 'normal slack-info-mode-map
+    ",u" 'slack-room-update-messages)
+  (evil-define-key 'normal slack-mode-map
+    ",c" 'slack-buffer-kill
+    ",ra" 'slack-message-add-reaction
+    ",rr" 'slack-message-remove-reaction
+    ",rs" 'slack-message-show-reaction-users
+    ",pl" 'slack-room-pins-list
+    ",pa" 'slack-message-pins-add
+    ",pr" 'slack-message-pins-remove
+    ",mm" 'slack-message-write-another-buffer
+    ",me" 'slack-message-edit
+    ",md" 'slack-message-delete
+    ",u" 'slack-room-update-messages
+    ",2" 'slack-message-embed-mention
+    ",3" 'slack-message-embed-channel
+    "\C-n" 'slack-buffer-goto-next-message
+    "\C-p" 'slack-buffer-goto-prev-message)
+   (evil-define-key 'normal slack-edit-message-mode-map
+    ",k" 'slack-message-cancel-edit
+    ",s" 'slack-message-send-from-buffer
+    ",2" 'slack-message-embed-mention
+    ",3" 'slack-message-embed-channel))
+
+(use-package alert
+  :commands (alert)
+  :init
+  (setq alert-default-style 'notifier))
+
 ;; use chrome to open links
 (setq browse-url-browser-function 'browse-url-generic
       browse-url-generic-program "google-chrome-stable")
@@ -1072,7 +1122,7 @@
     ("/home/ben/Dropbox/org/habbits.org" "/home/ben/Dropbox/org/index.org" "~/workspace/perl6/Projective/TODO.org" "~/workspace/elisp/telmacs/TODO.org" "~/workspace/perl5/EMP/TODO.org" "~/workspace/uni/inside_my_iphone/TODO.org")))
  '(package-selected-packages
    (quote
-    (evil-mc ess company-quickhelp elpy comapny-jedi company-jedi evil-avy ivy-hydra hydra evil-org fireplace evil-lion ztree yaml-mode which-key web-mode use-package tide smex skewer-mode racer python-mode php-mode perl6-mode package-utils ox-reveal org-projectile org-evil org-bullets mu4e-alert latex-preview-pane json-mode ivy-rich highlight-symbol helm-perldoc google-translate git-messenger git-gutter+ ggtags flycheck-rust flycheck-rtags flycheck-perl6 expand-region evil-surround evil-snipe evil-smartparens evil-nerd-commenter evil-mu4e evil-magit evil-leader evil-escape evil-cleverparens ensime elfeed-org elfeed-goodies editorconfig dumb-jump disaster counsel-projectile company-web company-irony company-go company-flx company-auctex company-anaconda cmake-mode cmake-ide clang-format calfw atom-dark-theme ag ace-window))))
+    (erlang swift-mode clojure-mode slack request evil-exchange langtool evil-mc ess company-quickhelp elpy comapny-jedi company-jedi evil-avy ivy-hydra hydra evil-org fireplace evil-lion ztree yaml-mode which-key web-mode use-package tide smex skewer-mode racer python-mode php-mode perl6-mode package-utils ox-reveal org-projectile org-evil org-bullets mu4e-alert latex-preview-pane json-mode ivy-rich highlight-symbol helm-perldoc google-translate git-messenger git-gutter+ ggtags flycheck-rust flycheck-rtags flycheck-perl6 expand-region evil-surround evil-snipe evil-smartparens evil-nerd-commenter evil-mu4e evil-magit evil-leader evil-escape evil-cleverparens ensime elfeed-org elfeed-goodies editorconfig dumb-jump disaster counsel-projectile company-web company-irony company-go company-flx company-auctex company-anaconda cmake-mode cmake-ide clang-format calfw atom-dark-theme ag ace-window))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
