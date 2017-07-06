@@ -668,6 +668,9 @@
   (evil-define-key 'normal python-mode-map (kbd "g h") 'elpy-doc)
   (evil-leader/set-key-for-mode 'python-mode "r" 'elpy-refactor))
 
+(use-package ob-ipython
+  :ensure t)
+
 ;; I hate the help buffer
 (defun py-help-at-point nil)
 
@@ -716,6 +719,12 @@
   (evil-leader/set-key
     "oa" 'org-agenda
     "oc" 'org-capture)
+
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((ipython . t)
+     ;; other languages..
+     ))
 
   (add-hook 'org-capture-mode-hook 'evil-insert-state)
   (setq org-modules (append org-modules '(org-habit)))
