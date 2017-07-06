@@ -37,3 +37,5 @@ tramp
 tutorial
 flycheck_init.el
 /srecode-map.el
+magithub/
+.cask/
