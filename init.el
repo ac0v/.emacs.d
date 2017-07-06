@@ -1127,6 +1127,15 @@
 (use-package counsel-dash
   :ensure t)
 
+(use-package julia-mode
+  :ensure t
+  :bind (("C-c C-c" . julia-shell-run-region-or-line))
+  :config
+  (use-package flycheck-julia
+    :ensure t)
+  (use-package julia-shell
+    :ensure t))
+
 ;; use chrome to open links
 (setq browse-url-browser-function 'browse-url-generic
       browse-url-generic-program "google-chrome-stable")
