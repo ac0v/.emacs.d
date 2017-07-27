@@ -873,8 +873,10 @@
 (use-package calfw
   :ensure t
   :config
-  (require 'calfw-org)
-  (require 'calfw-ical))
+  (use-package calfw-org
+    :ensure t)
+  (use-package calfw-ical
+    :ensure t))
 
 ;; some additional bindings
 (global-set-key (kbd "C-c k") 'kill-this-buffer)
