@@ -660,13 +660,16 @@
 ;;   (eval-after-load "company"
 ;;     '(add-to-list 'company-backends 'company-jedi)))
 
-(use-package elpy
-  :ensure t
-  :config
-  (elpy-enable)
-  (evil-define-key 'normal python-mode-map (kbd "g d") 'elpy-goto-definition)
-  (evil-define-key 'normal python-mode-map (kbd "g h") 'elpy-doc)
-  (evil-leader/set-key-for-mode 'python-mode "r" 'elpy-refactor))
+;; (use-package elpy
+;;   :ensure t
+;;   :config
+;;   (elpy-enable)
+;;   (evil-define-key 'normal python-mode-map (kbd "g d") 'elpy-goto-definition)
+;;   (evil-define-key 'normal python-mode-map (kbd "g h") 'elpy-doc)
+;;   (evil-leader/set-key-for-mode 'python-mode "r" 'elpy-refactor))
+
+(use-package ob-ipython
+  :ensure t)
 
 (use-package ob-ipython
   :ensure t)
@@ -692,13 +695,13 @@
   :config
   (evil-define-key 'normal go-mode-map (kbd "g d") 'godef-jump))
 
-;; completion
-(use-package company-go
-  :ensure t
-  :config
-  (add-hook 'go-mode-hook
-	    (lambda ()
-	      (set (make-local-variable 'company-backends) '(company-go)))))
+;; ;; completion
+;; (use-package company-go
+;;   :ensure t
+;;   :config
+;;   (add-hook 'go-mode-hook
+;; 	    (lambda ()
+;; 	      (set (make-local-variable 'company-backends) '(company-go)))))
 
 ;; org for everything
 (use-package org
