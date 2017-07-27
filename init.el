@@ -1103,6 +1103,29 @@
   (use-package julia-shell
     :ensure t))
 
+(use-package ycmd
+  :ensure t
+  :config
+  (set-variable 'ycmd-server-command '("python2" "/usr/share/vim/vimfiles/third_party/ycmd/ycmd"))
+  (add-hook 'after-init-hook #'global-ycmd-mode)
+
+  (evil-define-key 'normal python-mode-map (kbd "g d") 'ycmd-goto)
+  (evil-define-key 'normal python-mode-map (kbd "g h") 'ycmd-show-documentation)
+  (evil-leader/set-key-for-mode 'python-mode "r" 'ycmd-refactor-name)
+
+  ;; (evil-define-key 'normal go-mode-map (kbd "g d") 'ycmd-goto))
+
+  (use-package flycheck-ycmd
+    :ensure t
+    :config
+    (flycheck-ycmd-setup))
+
+  (use-package company-ycmd
+    :ensure t
+    :config
+    (company-ycmd-setup))
+
+  (setq global-flycheck-mode t))
 ;; use chrome to open links
 (setq browse-url-browser-function 'browse-url-generic
       browse-url-generic-program "google-chrome-stable")
