@@ -842,10 +842,10 @@
     "mb" 'magit-log-buffer-file
     "ml" 'magit-log))
 
-(use-package magithub
-  :after magit
-  :ensure t
-  :config (magithub-feature-autoinject t))
+;; (use-package magithub
+;;   :after magit
+;;   :ensure t
+;;   :config (magithub-feature-autoinject t))
 
 ;; show commit message of line
 (use-package git-messenger
