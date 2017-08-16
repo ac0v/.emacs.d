@@ -553,8 +553,7 @@
   :bind(("C-x o" . ace-window))
   :ensure t
   :config
-  (evil-leader/set-key
-    "TAB" 'ace-window))
+  (evil-leader/set-key "TAB" 'ace-window))
 
 (use-package dumb-jump
   :ensure t
