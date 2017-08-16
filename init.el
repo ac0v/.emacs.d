@@ -4,21 +4,26 @@
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
 (package-initialize)
 
-;; compile config if changed and saved
 (defun my/compile-cfg ()
-  "compile config if config is saved"
+  "Compile config if config is saved."
   (when (equal (buffer-file-name)
 	       (expand-file-name (concat user-emacs-directory "init.el")))
     (byte-compile-file (concat user-emacs-directory "init.el"))))
 
 (add-hook 'after-save-hook 'my/compile-cfg)
 
-;; bootstrap use-package
 (unless (package-installed-p 'use-package)
   (package-refresh-contents)
   (package-install 'use-package))
 
+;; use emacs as server
+(server-start)
+
 (require 'use-package)
+
+;; PACKAGE MANAGEMENT
+(use-package package-utils
+  :ensure t)
 
 ;; vim emulation
 (use-package evil
@@ -26,22 +31,21 @@
   :config
   (define-key evil-normal-state-map (kbd "C-u") 'evil-scroll-up)
   (define-key evil-normal-state-map (kbd "g f") 'imenu)
-  (evil-mode 1)
+  (evil-mode 1))
 
-  (use-package evil-mc
+(use-package evil-mc
     :ensure t
     :config
     (evil-mc-mode  1))
 
-  ;; <fd> instead of <escape> to go to normal mode
-  (use-package evil-escape
-    :ensure t
-    :config
-    (setq-default evil-escape-key-sequence "fd")
-    (setq-default evil-escape-delay 0.2)
-    (evil-escape-mode)
+(use-package evil-escape
+  :ensure t
+  :config
+  (setq-default evil-escape-key-sequence "fd")
+  (setq-default evil-escape-delay 0.2)
+  (evil-escape-mode))
 
-    (use-package evil-leader
+(use-package evil-leader
       :ensure t
       :config
       (global-evil-leader-mode)
@@ -51,7 +55,7 @@
 		"e" 'find-file
 		"b" 'switch-to-buffer))
 
-    (use-package evil-org
+(use-package evil-org
       :ensure t
       :after org
       :config
@@ -60,26 +64,12 @@
 		(lambda ()
 		  (evil-org-set-key-theme))))
 
-    (use-package org-evil
-      :ensure t
-      :config
-      (with-eval-after-load 'company
-	(add-hook 'org-agenda-mode-hook (lambda ()
-					  (define-key org-agenda-mode-map "j" 'evil-next-line)
-					  (define-key org-agenda-mode-map "k" 'evil-previous-line)))
-	(evil-define-key 'normal org-evil-mode-map
-	  "-" 'org-cycle-list-bullet
-	  "H" 'org-metaleft
-	  "J" 'org-metaup
-	  "K" 'org-metadown
-	  "L" 'org-metaleft)))
-
-    (use-package evil-surround
+(use-package evil-surround
       :ensure t
       :config
       (global-evil-surround-mode 1))
 
-    (use-package evil-nerd-commenter
+(use-package evil-nerd-commenter
       :ensure t
       :config
       (evil-leader/set-key
@@ -90,55 +80,27 @@
 	"cp" 'evilnc-comment-or-uncomment-paragraphs
 	"cr" 'comment-or-uncomment-region))
 
-    (use-package evil-avy
+(use-package evil-avy
       :ensure t
       :config
       (evil-avy-mode))
 
-    (use-package evil-magit
+(use-package evil-magit
       :ensure t
       :config
       (add-to-list 'evil-insert-state-modes 'magit-log-edit-mode)
       (evil-leader/set-key
 	"s" 'magit-status))
 
-    (use-package evil-cleverparens
-      :ensure t)
-
-    (use-package evil-exchange
+(use-package evil-exchange
       :ensure t
       :config
       (evil-exchange-install))
 
-    (use-package evil-snipe
-      :ensure t
-      :config
-      (evil-snipe-mode 1)
-      (setq evil-snipe-scope 'whole-visible)
-      (add-hook 'magit-mode-hook 'turn-off-evil-snipe-override-mode))
-
-    (use-package evil-lion
+(use-package evil-lion
       :ensure t
       :config
       (evil-lion-mode))
-
-    (use-package evil-matchit
-      :ensure t
-      :config
-      (global-evil-matchit-mode))
-
-    (use-package evil-smartparens
-      :ensure t
-      :config
-      (add-hook 'smartparens-enabled-hook #'evil-smartparens-mode))))
-
-(use-package expand-region
-  :ensure t
-  :config
-  (evil-leader/set-key "<SPC>" 'er/expand-region))
-
-;; use emacs as server
-(server-start)
 
 ;; file to mode mapping
 (add-to-list 'auto-mode-alist '("\\.cpp$" . c++-mode))
@@ -182,14 +144,16 @@
       `((".*" ,emacs-autosave-directory t)))
 
 ;; some usefull defaults
-(setq indent-tabs-mode nil                 ; no tabs
-      auto-revert-interval 1               ; Refresh buffers fast
-      inhibit-startup-message t            ; No splash screen please
-      initial-scratch-message nil          ; Clean scratch buffer
-      ring-bell-function 'ignore           ; Quiet
-      set-language-environment "UTF-8"     ; utf8 everywhere
-      abbrev-file-name "~/.emacs.d/.abbrev"; file for abbrevs
-      )
+(setq indent-tabs-mode nil
+      auto-revert-interval 1
+      inhibit-startup-message t
+      initial-scratch-message nil 
+      ring-bell-function 'ignore
+      set-language-environment "UTF-8"
+      abbrev-file-name "~/.emacs.d/.abbrev")
+
+(setq browse-url-browser-function 'browse-url-generic
+      browse-url-generic-program "google-chrome-stable")
 
 ;; show possible keybindings
 (use-package which-key
@@ -197,7 +161,8 @@
   :config
   (which-key-mode 1))
 
-;; don't show bars
+;; LAYOUT
+
 (dolist (mode
 	 '(tool-bar-mode                ; No toolbars, more room for text
 	   scroll-bar-mode              ; No scroll bars either
@@ -205,21 +170,12 @@
 	   menu-bar-mode))              ; No menu-bar
   (funcall mode 0))
 
-;; theme
 (use-package atom-dark-theme
   :ensure t
   :config
   (load-theme 'atom-dark 'NO-CONFIRM))
 
-;; show matching parens
-(use-package smartparens
-  :ensure t
-  :config
-  (require 'smartparens-config)
-  (show-paren-mode 1))
-
-
-;; manage projects
+;; PROJECT MANAGEMENT
 (use-package projectile
   :ensure t
   :config
@@ -231,12 +187,7 @@
     "pc" 'counsel-projectile-compile-project
     "pt" 'counsel-projectile-test-project))
 
-
-;; usefull for diffing projects
-(use-package ztree
-  :ensure t)
-
-;; ivy for nicer minibuffer completion
+;; MINIBUFFER STUFF
 (use-package ivy :ensure t
   :diminish (ivy-mode . "")
   :bind (("C-x b" . ivy-switch-buffer))
@@ -249,30 +200,26 @@
 	ivy-initial-inputs-alist nil ; no regexp by default
 	magit-completing-read-function 'ivy-completing-read
 	completion-in-region-function 'ivy-completion-in-region
-	ivy-re-builders-alist '((t   . ivy--regex-ignore-order)))
+	ivy-re-builders-alist '((t   . ivy--regex-ignore-order))))
 
-  ;; more information in minibuffer
-  (use-package ivy-rich
+(use-package ivy-rich
     :ensure t
     :config
     (ivy-set-display-transformer 'ivy-switch-buffer 'ivy-rich-switch-buffer-transformer)
     (setq ivy-virtual-abbreviate 'full
-	  ivy-rich-switch-buffer-align-virtual-buffer t)))
+	  ivy-rich-switch-buffer-align-virtual-buffer t))
 
-;; search occurrences in a buffer
 (use-package swiper
   :ensure t
   :config
   :bind (("M-o" . swiper)))
 
-;; remember important selections after M-x
 (use-package smex
   :ensure t
   :config
   (smex-initialize)
   (setq smex-completion-method 'ivy))
 
-;; nicer minibuffer selection for some commands
 (use-package counsel
   :ensure t
   :bind (("C-c h" . counsel-descbinds)
@@ -289,15 +236,21 @@
     :config
     (counsel-projectile-on)))
 
-;; auto completion with company
+;; COMPLETION
+(use-package company-flx
+    :ensure t
+    :config
+    (with-eval-after-load 'company
+      (add-hook 'company-mode-hook (lambda ()
+				     (add-to-list 'company-backends 'company-capf)))
+      (company-flx-mode +1)))
+
 (use-package company
   :ensure t
   :config
   (setq company-idle-delay 0
 	company-echo-delay 0
-	company-dabbrev-downcase nil
 	company-minimum-prefix-length 1
-	ompany-tooltip-limit 20
 	company-selection-wrap-around t
 	company-transformers '(company-sort-by-occurrence
 			       company-sort-by-backend-importance))
@@ -312,42 +265,42 @@
      `(company-scrollbar-bg ((t (:background ,(color-lighten-name bg 10)))))
      `(company-scrollbar-fg ((t (:background ,(color-lighten-name bg 5)))))
      `(company-tooltip-selection ((t (:inherit font-lock-function-name-face))))
-     `(company-tooltip-common ((t (:inherit font-lock-constant-face))))))
+     `(company-tooltip-common ((t (:inherit font-lock-constant-face)))))))
 
-  ;; fuzzy completion
-  (use-package company-flx
-    :ensure t
-    :config
-    (with-eval-after-load 'company
-      (add-hook 'company-mode-hook (lambda ()
-				     (add-to-list 'company-backends 'company-capf)))
-      (company-flx-mode +1)))
-  ;; web completion
-  (use-package company-web
-    :ensure t
-    :defer t
-    :config
-    (add-to-list 'company-backends '(company-web-html))
-    (add-to-list 'company-backends '(company-web-jade)))
-
-  (use-package company-quickhelp
-    :ensure t
-    :config
-    (company-quickhelp-mode))
-  )
-
-;; code snippets
 (use-package yasnippet
   :ensure t
   :config
   (yas-global-mode 1))
 
-;; sytnax checking
+(use-package ycmd
+  :ensure t
+  :config
+  (set-variable 'ycmd-global-config "/usr/share/vim/vimfiles/third_party/ycmd/ycmd/default_settings.json")
+  (set-variable 'ycmd-server-command '("python2" "/usr/share/vim/vimfiles/third_party/ycmd/ycmd"))
+  (add-hook 'after-init-hook #'global-ycmd-mode)
+
+  (evil-define-key 'normal python-mode-map (kbd "g d") 'ycmd-goto)
+  (evil-define-key 'normal python-mode-map (kbd "g h") 'ycmd-show-documentation)
+
+  (evil-define-key 'normal js2-mode-map (kbd "g d") 'ycmd-goto)
+  (evil-define-key 'normal js2-mode-map (kbd "g h") 'ycmd-show-documentation)
+  (evil-leader/set-key-for-mode 'js2-mode "r" 'ycmd-refactor-rename)
+
+  (use-package flycheck-ycmd
+    :ensure t
+    :config
+    (flycheck-ycmd-setup))
+
+  (use-package company-ycmd
+    :ensure t
+    :config
+    (company-ycmd-setup)))
+
+;; LINTING
 (use-package flycheck
   :ensure t
   :config
   (global-flycheck-mode))
-
 
 ;; spell checking
 (use-package flyspell
@@ -355,7 +308,13 @@
   :config
   (setq flyspell-issue-message-flag nil)) ; performance
 
-;; some usefull functions
+(use-package langtool
+  :ensure t
+  :config
+  (setq langtool-java-classpath
+	"/usr/share/languagetool:/usr/share/java/languagetool/*"))
+
+;; CUSTOM FUNCTIONS
 (defun my/rename-file-and-buffer (new-name)
   "Renames both current buffer and file it's visiting to NEW-NAME."
   (interactive "sNew name: ")
@@ -377,19 +336,7 @@
   (mapc 'kill-buffer
 	(delq (current-buffer) (buffer-list))))
 
-(defun perltidy-region ()
-  "Run perltidy on the current region."
-  (interactive)
-  (save-excursion
-    (shell-command-on-region (point) (mark) "perltidy-sweet -q" nil t)))
-
-(defun perltidy-defun ()
-  "Run perltidy on the current defun."
-  (interactive)
-  (save-excursion (mark-defun)
-		  (perltidy-region)))
-
-(defun toggle-maximize-buffer ()
+(defun my/toggle-maximize-buffer ()
   "Maximize buffer"
   (interactive)
   (if (= 1 (length (window-list)))
@@ -398,7 +345,7 @@
       (set-register '_ (list (current-window-configuration)))
       (delete-other-windows))))
 
-(defun random-sort-lines (beg end)
+(defun my/random-sort-lines (beg end)
   "Sort lines in region randomly."
   (interactive "r")
   (save-excursion
@@ -410,7 +357,7 @@
 	(sort-subr nil 'forward-line 'end-of-line nil nil
 		   (lambda (s1 s2) (eq (random 2) 0)))))))
 
-;; interact with browser
+;; JAVASCRIPT
 (use-package skewer-mode
   :ensure t
   :config
@@ -418,8 +365,35 @@
   (add-hook 'css-mode-hook 'skewer-css-mode)
   (add-hook 'html-mode-hook 'skewer-html-mode))
 
+(use-package js2-mode
+  :ensure t
+  :config
+  (add-hook 'js2-mode-hook #'js2-imenu-extras-mode))
 
-;; major mode for html and web stuf
+(use-package js2-refactor
+  :ensure t
+  :config
+  (add-hook 'js2-mode-hook #'js2-refactor-mode))
+
+;; (use-package company-tern
+;;   :ensure t
+;;   :config
+;;   (setq tern-command '("node" "/usr/lib/node_modules/tern/bin/tern"))
+;;   (add-to-list 'company-backends 'company-tern)
+;;   (add-hook 'js2-mode-hook (lambda () (tern-mode))))
+
+(use-package nodejs-repl
+  :ensure t
+  :config
+  (add-hook 'js-mode-hook
+          (lambda ()
+            (define-key js-mode-map (kbd "C-x C-e") 'nodejs-repl-send-last-expression)
+            (define-key js-mode-map (kbd "C-c C-j") 'nodejs-repl-send-line)
+            (define-key js-mode-map (kbd "C-c C-r") 'nodejs-repl-send-region)
+            (define-key js-mode-map (kbd "C-c C-l") 'nodejs-repl-load-file)
+            (define-key js-mode-map (kbd "C-c C-z") 'nodejs-repl-switch-to-repl))))
+
+;; WEB HTML CSS
 (use-package web-mode
   :ensure t
   :defer t
@@ -467,13 +441,18 @@
 		     (setq emmet-use-css-transform t)
 		   (setq emmet-use-css-transform nil))))))
 
-;; javascript stuff
-(use-package js2-mode
-  :ensure t)
+(use-package company-web
+    :ensure t
+    :defer t
+    :config
+    (add-to-list 'company-backends '(company-web-html))
+    (add-to-list 'company-backends '(company-web-jade)))
 
+;; JSON
 (use-package json-mode
   :ensure t)
 
+;; TYPESCRIPT
 (defun setup-tide-mode ()
   (tide-setup)
   (tide-hl-identifier-mode +1))
@@ -483,12 +462,23 @@
   :config
   (add-hook 'typescript-mode-hook #'setup-tide-mode))
 
-
-;; php stuff
+;; PHP
 (use-package php-mode
   :ensure t)
 
-;; perl stuff
+;; PERL
+(defun perltidy-region ()
+  "Run perltidy on the current region."
+  (interactive)
+  (save-excursion
+    (shell-command-on-region (point) (mark) "perltidy-sweet -q" nil t)))
+
+(defun perltidy-defun ()
+  "Run perltidy on the current defun."
+  (interactive)
+  (save-excursion (mark-defun)
+		  (perltidy-region)))
+
 (defalias 'perl-mode 'cperl-mode)
 (use-package cperl-mode
   :ensure t
@@ -507,7 +497,7 @@
 ;; checker that also integrates carton modules
 (flycheck-define-checker my-perl
   "A Perl syntax checker using the Perl interpreter."
-  :command ("~/perl5/perlbrew/perls/perl-5.24.0/bin/perl" "-w" "-c"
+  :command ("/usr/bin/perl" "-w" "-c"
 	    (eval (let ((options '()))
 		    (when (projectile-project-p)
 		      (push (concat "-I" (projectile-project-root)) options)
@@ -539,24 +529,39 @@
   (flycheck-select-checker 'my-perl))
 (add-hook 'cperl-mode-hook 'my-cperl-mode-hook)
 
-;; browse perl documentation
 (use-package helm-perldoc
   :ensure t)
+
+;; PERL6
 
 (use-package perl6-mode
   :ensure t)
 
-(use-package flycheck-perl6
-  :ensure t)
+;; (use-package flycheck-perl6
+;;   :ensure t)
 
-;; search with ag
+;; SEARCHING AND NAVIGATION
 (use-package ag
   :ensure t
   :bind (("M-s" . counsel-projectile-ag)))
 
-;; latex
+(use-package ace-window
+  :bind(("C-x o" . ace-window))
+  :ensure t
+  :config
+  (evil-leader/set-key
+    "TAB" 'ace-window))
 
-;; latex completion
+(use-package dumb-jump
+  :ensure t
+  :config
+  (eval-after-load 'evil
+    (eval-after-load 'dumb-jump
+      (defadvice dumb-jump-go (before dotemacs activate)
+	(evil--jumps-push))))
+  (define-key evil-normal-state-map (kbd "g D") 'dumb-jump-go))
+
+;; LATEX
 (use-package company-auctex
   :ensure t
   :config
@@ -566,19 +571,13 @@
 (add-hook 'LaTeX-mode-hook 'flyspell-mode)
 (add-hook 'LaTeX-mode-hook 'LaTeX-math-mode)
 
-;; latex compilation
 (setq latex-run-command "pdflatex")
 (TeX-PDF-mode t)
 (evil-leader/set-key-for-mode 'latex-mode "x" 'TeX-command-master)
-;; (defun my/compile-latex ()
-;;   (interactive)
-;;   (call-process "pdflatex" (buffer-file-name)))
 
-
-;; c/c++ stuff
+;; C/C++
 (setq c-basic-offset 4)
 
-;; rtags for navigation and error checking
 (use-package rtags
   :ensure t
   :config
@@ -594,7 +593,6 @@
     :ensure t)
   (require 'flycheck-rtags))
 
-;; irony for completion
 (use-package irony
   :ensure t
   :config
@@ -607,12 +605,9 @@
   :config
   (add-to-list 'company-backends 'company-irony))
 
-
-;; major mode for editing cmake files
 (use-package cmake-mode
   :ensure t)
 
-;; auto setup for c/c++ related modules in a cmake environment
 (use-package cmake-ide
   :ensure t
   :config
@@ -625,71 +620,16 @@
   (let ((dir (read-directory-name "Build dir:")))
     (setq cmake-ide-build-dir dir)))
 
-;; disassemble C/C++
 (use-package disaster
   :ensure t
   :config
   (define-key c-mode-base-map (kbd "C-c d") 'disaster))
 
-
-;; formatting c/c++ code with clang
 (use-package clang-format
   :ensure t
   :config)
 
-;; python stuff
-
-;; completion + navigation
-;; (use-package anaconda-mode
-;;   :ensure t
-;;   :config
-;;   (add-hook 'python-mode-hook 'anaconda-mode)
-;;   (evil-define-key 'normal python-mode-map (kbd "g d") 'anaconda-mode-find-definitions)
-;;   (evil-define-key 'normal python-mode-map (kbd "g r") 'anaconda-mode-find-references)
-;;   (use-package company-anaconda
-;;     :ensure t
-;;     :config
-;;     (anaconda-eldoc-mode 1)
-;;     (eval-after-load "company"
-;;       '(add-to-list 'company-backends 'company-anaconda))))
-
-;; (use-package company-jedi
-;;   :ensure t
-;;   :config
-;;   (evil-define-key 'normal python-mode-map (kbd "g d") 'jedi:goto-definition)
-;;   (eval-after-load "company"
-;;     '(add-to-list 'company-backends 'company-jedi)))
-
-;; (use-package elpy
-;;   :ensure t
-;;   :config
-;;   (elpy-enable)
-;;   (evil-define-key 'normal python-mode-map (kbd "g d") 'elpy-goto-definition)
-;;   (evil-define-key 'normal python-mode-map (kbd "g h") 'elpy-doc)
-;;   (evil-leader/set-key-for-mode 'python-mode "r" 'elpy-refactor))
-
-(use-package ob-ipython
-  :ensure t)
-
-(use-package ob-ipython
-  :ensure t)
-
-;; I hate the help buffer
-(defun py-help-at-point nil)
-
-;; major mode for python
-;; (use-package python-mode
-;;   :ensure t
-;;   :bind (("C-c C-c" . python-shell-send-buffer))
-;;   :config
-;;   (add-hook 'python-mode-hook
-;; 	    (lambda ()
-;; 	      (setq-default tab-width 4)))
-;;   (add-hook 'inferior-python-mode-hook
-;; 	    (lambda ()
-;; 	      (company-mode -1))))
-
-;; go stuff
+;; GO
 (use-package go-mode
   :ensure t
   :config
@@ -703,7 +643,7 @@
 ;; 	    (lambda ()
 ;; 	      (set (make-local-variable 'company-backends) '(company-go)))))
 
-;; org for everything
+;; ORG
 (use-package org
   :ensure t
   :bind (("C-c c" . org-capture)
@@ -769,21 +709,7 @@
   (setq org-capture-templates
 	'(("t" "Todo" entry (file "~/Dropbox/org/index.org" "")
 	   "* TODO %?\n"))))
-;; Include the latex-exporter
-(require 'ox-latex)
-;; Add minted to the defaults packages to include when exporting.
-(add-to-list 'org-latex-packages-alist '("" "minted"))
-;; Tell the latex export to use the minted package for source
-;; code coloration.
-(setq org-latex-listings 'minted)
-;; Let the exporter use the -shell-escape option to let latex
-;; execute external programs.
-;; This obviously and can be dangerous to activate!
-(setq org-latex-pdf-process
-      '("xelatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
 
-
-;; select date when todo changed state
 (defun my/org-todo-with-date (&optional arg)
   (interactive "P")
   (cl-letf* ((org-read-date-prefer-future nil)
@@ -792,14 +718,6 @@
 	      #'(lambda () my-current-time)))
     (org-todo arg)))
 
-;; nice html/js slides
-(use-package ox-reveal
-  :ensure t
-  :config
-  (setq org-reveal-root (concat "file://" (getenv "HOME") "/src/reveal.js"))
-  (setq org-reveal-mathjax t))
-
-;; nicer looking org buffer
 (use-package org-bullets
   :ensure t
   :config
@@ -807,8 +725,6 @@
   (setq org-bullets-bullet-list '("•"))
   (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
 
-
-;; capture for projects
 (use-package org-projectile
   :bind (("C-c n p" . org-projectile:project-todo-completing-read)
 	 ("C-c c" . org-capture))
@@ -818,7 +734,6 @@
   (setq org-projectile:per-repo-filename "TODO.org")
   (setq org-agenda-files (append org-agenda-files (org-projectile:todo-files))))
 
-;; set background correctly if exporting source blocks
 (defun my/org-inline-css-hook (exporter)
   "Insert custom inline css to automatically set the
      background of code to whatever theme I'm using's background"
@@ -834,7 +749,7 @@
 	 my-pre-bg my-pre-fg))))))
 (add-hook 'my/org-export-before-processing-hook #'my/org-inline-css-hook)
 
-;; git stuff
+;; VCS
 (use-package magit
   :ensure t
   :bind (("C-x g" . magit-status))
@@ -850,7 +765,6 @@
 ;;   :ensure t
 ;;   :config (magithub-feature-autoinject t))
 
-;; show commit message of line
 (use-package git-messenger
   :ensure t
   :config
@@ -859,41 +773,15 @@
   (setq git-messenger:show-detail t)
   (setq git-messenger:use-magit-popup t))
 
-
-;; show changes in line
 (use-package git-gutter+
   :ensure t)
 
-;; frame movement
-(use-package ace-window
-  :bind(("C-x o" . ace-window))
-  :ensure t
-  :config
-  (evil-leader/set-key
-    "TAB" 'ace-window))
-
-;; calendar
-(use-package calfw
-  :ensure t
-  :config
-  (use-package calfw-org
-    :ensure t)
-  (use-package calfw-ical
-    :ensure t))
-
-;; some additional bindings
+;; ADDITIONAL BINDINGS
 (global-set-key (kbd "C-c k") 'kill-this-buffer)
 (global-set-key (kbd "C-x C-o") 'ff-find-other-file)
 (global-set-key (kbd "s-m") 'toggle-maximize-buffer)
 
-;; translate something in a buffer
-(use-package google-translate
-  :ensure t
-  :config
-  (global-set-key (kbd "C-c t") 'google-translate-at-point)
-  (global-set-key (kbd "C-c T") 'google-translate-query-translate))
-
-;; some scala things
+;; SCALA
 (use-package sbt-mode
   :ensure t)
 
@@ -905,24 +793,17 @@
 (use-package ensime
   :ensure t)
 
-;; yaml stuff
+;; YAML
 (use-package yaml-mode
   :ensure t)
 
 ;; not in repo
 (load-file "~/.emacs.d/private.el")
 
-
-;; package updates and other package related stuff
-(use-package package-utils
-  :ensure t)
-
-;; run buffer
 (defun my/xah-run-current-file ()
   (interactive)
   (let (
 	(-suffix-map
-	 ;; (‹extension› . ‹shell program name›)
 	 `(
 	   ("php" . "php")
 	   ("pl6" . "perl6")
@@ -939,10 +820,7 @@
 	   ("vbs" . "cscript")
 	   ("tex" . "pdflatex")
 	   ("latex" . "pdflatex")
-	   ("java" . "javac")
-	   ;; ("pov" . "/usr/local/bin/povray +R2 +A0.1 +J1.2 +Am2 +Q9 +H480 +W640")
-	   ))
-
+	   ("java" . "javac")))
 	-fname
 	-fSuffix
 	-prog-name
@@ -968,9 +846,10 @@
 	      (message "Running…")
 	      (shell-command -cmd-str "*xah-run-current-file output*" ))
 	  (message "No recognized program file suffix for this file."))))))
+
 (global-set-key (kbd "<f5>") 'my/xah-run-current-file)
 
-;; rust things
+;; RUST
 (use-package rust-mode
   :ensure t
   :config
@@ -985,47 +864,14 @@
 (use-package racer
   :ensure t)
 
-;; readout and use .editorconfig files
+;; EDITORCONFIG
 (use-package editorconfig
   :ensure t
   :config
   (editorconfig-mode 1))
 
-;; rss feeds for boring times
-(use-package elfeed
-  :ensure t
-  :config
-  (evil-leader/set-key "nf" 'elfeed)
-  (setq elfeed-feeds
-	'("http://nullprogram.com/feed/"
-	  "http://www.tsinghua.edu.cn/publish/news/rss/all.xml"
-	  "http://planet.emacsen.org/atom.xml"))
-  (add-to-list 'evil-emacs-state-modes 'elfeed-search-mode)
-  (add-to-list 'evil-emacs-state-modes 'elfeed-show-mode)
-  (add-to-list 'evil-emacs-state-modes 'rtags-mode)
-  (define-key elfeed-show-mode-map "j" 'evil-next-line)
-  (define-key elfeed-show-mode-map "k" 'evil-previous-line)
-  (define-key elfeed-search-mode-map "j" 'evil-next-line)
-  (define-key elfeed-search-mode-map "k" 'evil-previous-line))
-
-(use-package elfeed-goodies
-  :ensure t
-  :config
-  (elfeed-goodies/setup)
-  (evil-define-key 'evilified elfeed-show-mode-map "o" 'elfeed-goodies/show-ace-link))
-
-(use-package elfeed-org
-  :ensure t)
-
 ;; jumping around in files
-(use-package dumb-jump
-  :ensure t
-  :config
-  (eval-after-load 'evil
-    (eval-after-load 'dumb-jump
-      (defadvice dumb-jump-go (before dotemacs activate)
-	(evil--jumps-push))))
-  (define-key evil-normal-state-map (kbd "g D") 'dumb-jump-go))
+
 
 ;; tags
 (use-package ggtags
@@ -1068,7 +914,7 @@
 
 (add-hook 'find-file-hook #'my/shell-set-hook)
 
-;; markdown stuff
+;; MARKDOWN
 (use-package markdown-mode
   :ensure t
   :commands (markdown-mode gfm-mode)
@@ -1077,58 +923,10 @@
          ("\\.markdown\\'" . markdown-mode))
   :init (setq markdown-command "multimarkdown"))
 
-
-(use-package langtool
-  :ensure t
-  :config
-(setq langtool-java-classpath
-      "/usr/share/languagetool:/usr/share/java/languagetool/*")
-  )
-
-(use-package alert
-  :commands (alert)
-  :init
-  (setq alert-default-style 'notifier))
-
-
+;; DOCUMENTATION LOOKUP
 (use-package counsel-dash
   :ensure t)
 
-(use-package julia-mode
-  :ensure t
-  :bind (("C-c C-c" . julia-shell-run-region-or-line))
-  :config
-  (use-package flycheck-julia
-    :ensure t)
-  (use-package julia-shell
-    :ensure t))
-
-(use-package ycmd
-  :ensure t
-  :config
-  (set-variable 'ycmd-server-command '("python2" "/usr/share/vim/vimfiles/third_party/ycmd/ycmd"))
-  (add-hook 'after-init-hook #'global-ycmd-mode)
-
-  (evil-define-key 'normal python-mode-map (kbd "g d") 'ycmd-goto)
-  (evil-define-key 'normal python-mode-map (kbd "g h") 'ycmd-show-documentation)
-  (evil-leader/set-key-for-mode 'python-mode "r" 'ycmd-refactor-name)
-
-  ;; (evil-define-key 'normal go-mode-map (kbd "g d") 'ycmd-goto))
-
-  (use-package flycheck-ycmd
-    :ensure t
-    :config
-    (flycheck-ycmd-setup))
-
-  (use-package company-ycmd
-    :ensure t
-    :config
-    (company-ycmd-setup))
-
-  (setq global-flycheck-mode t))
-;; use chrome to open links
-(setq browse-url-browser-function 'browse-url-generic
-      browse-url-generic-program "google-chrome-stable")
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -1139,15 +937,15 @@
     ("/home/ben/Dropbox/org/habbits.org" "/home/ben/Dropbox/org/index.org" "~/workspace/perl6/Projective/TODO.org" "~/workspace/elisp/telmacs/TODO.org" "~/workspace/perl5/EMP/TODO.org" "~/workspace/uni/inside_my_iphone/TODO.org")))
  '(package-selected-packages
    (quote
-    (flymake-lua company-lua lua-mode calfw-ical calfw-org flycheck-ycmd company-ycmd ycmd www-synonyms paste-of-code gitter tree-mode ob-ipython julia-shell flycheck-julia magithub package-lint test-simple erlang swift-mode clojure-mode slack request evil-exchange langtool evil-mc ess company-quickhelp elpy comapny-jedi company-jedi evil-avy ivy-hydra hydra evil-org fireplace evil-lion ztree yaml-mode which-key web-mode use-package tide smex skewer-mode racer python-mode php-mode perl6-mode package-utils ox-reveal org-projectile org-evil org-bullets mu4e-alert latex-preview-pane json-mode ivy-rich highlight-symbol helm-perldoc google-translate git-messenger git-gutter+ ggtags flycheck-rust flycheck-rtags flycheck-perl6 expand-region evil-surround evil-snipe evil-smartparens evil-nerd-commenter evil-mu4e evil-magit evil-leader evil-escape evil-cleverparens ensime elfeed-org elfeed-goodies editorconfig dumb-jump disaster counsel-projectile company-web company-irony company-go company-flx company-auctex company-anaconda cmake-mode cmake-ide clang-format calfw atom-dark-theme ag ace-window))))
+    (xref-js2 js2-refactor restclient nodejs-repl js-auto-beautify flymake-lua company-lua lua-mode calfw-ical calfw-org flycheck-ycmd company-ycmd ycmd www-synonyms paste-of-code gitter tree-mode ob-ipython julia-shell flycheck-julia magithub package-lint test-simple erlang swift-mode clojure-mode slack request evil-exchange langtool evil-mc ess company-quickhelp elpy comapny-jedi company-jedi evil-avy ivy-hydra hydra evil-org fireplace evil-lion ztree yaml-mode which-key web-mode use-package tide smex skewer-mode racer python-mode php-mode perl6-mode package-utils ox-reveal org-projectile org-evil org-bullets mu4e-alert latex-preview-pane json-mode ivy-rich highlight-symbol helm-perldoc google-translate git-messenger git-gutter+ ggtags flycheck-rust flycheck-rtags flycheck-perl6 expand-region evil-surround evil-snipe evil-smartparens evil-nerd-commenter evil-mu4e evil-magit evil-leader evil-escape evil-cleverparens ensime elfeed-org elfeed-goodies editorconfig dumb-jump disaster counsel-projectile company-web company-irony company-go company-flx company-auctex company-anaconda cmake-mode cmake-ide clang-format calfw atom-dark-theme ag ace-window))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(company-scrollbar-bg ((t (:background "#34f238993c40"))))
- '(company-scrollbar-fg ((t (:background "#28f92bcc2ea0"))))
- '(company-tooltip ((t (:inherit default :background "#21ca241e2673"))))
+ '(company-scrollbar-bg ((t (:background "#34383c"))))
+ '(company-scrollbar-fg ((t (:background "#282b2e"))))
+ '(company-tooltip ((t (:inherit default :background "#212426"))))
  '(company-tooltip-common ((t (:inherit font-lock-constant-face))))
  '(company-tooltip-selection ((t (:inherit font-lock-function-name-face))))
  '(cperl-array-face ((t)))
