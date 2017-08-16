@@ -285,7 +285,7 @@
   (evil-define-key 'normal python-mode-map (kbd "g d") 'ycmd-goto)
   (evil-define-key 'normal python-mode-map (kbd "g h") 'ycmd-show-documentation)
 
-  (evil-define-key 'normal js2-mode-map (kbd "g d") 'ycmd-goto)
+  ;; (evil-define-key 'normal js2-mode-map (kbd "g d") 'ycmd-goto)
   (evil-define-key 'normal js2-mode-map (kbd "g h") 'ycmd-show-documentation)
   (evil-leader/set-key-for-mode 'js2-mode "r" 'ycmd-refactor-rename)
 
@@ -378,12 +378,13 @@
   :config
   (add-hook 'js2-mode-hook #'js2-refactor-mode))
 
-;; (use-package company-tern
-;;   :ensure t
-;;   :config
-;;   (setq tern-command '("node" "/usr/lib/node_modules/tern/bin/tern"))
-;;   (add-to-list 'company-backends 'company-tern)
-;;   (add-hook 'js2-mode-hook (lambda () (tern-mode))))
+(use-package company-tern
+  :ensure t
+  :config
+  ;; (setq tern-command '("node" "/usr/lib/node_modules/tern/bin/tern"))
+  (evil-define-key 'normal js2-mode-map (kbd "g d") 'tern-find-definition)
+  (add-to-list 'company-backends 'company-tern)
+  (add-hook 'js2-mode-hook (lambda () (tern-mode))))
 
 (use-package nodejs-repl
   :ensure t
