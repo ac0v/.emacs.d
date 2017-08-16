@@ -45,6 +45,8 @@
   (setq-default evil-escape-delay 0.2)
   (evil-escape-mode))
 
+;TODO: ivy should do switch buffer, but somehow C-n does not work
+
 (use-package evil-leader
       :ensure t
       :config
@@ -53,7 +55,8 @@
       (evil-leader/set-key
 		"k"  'kill-this-buffer
 		"e" 'find-file
-		"b" 'switch-to-buffer))
+		"b" 'ido-switch-buffer))
+		;; "b" 'switch-to-buffer))
 
 (use-package evil-org
       :ensure t
@@ -190,7 +193,7 @@
 ;; MINIBUFFER STUFF
 (use-package ivy :ensure t
   :diminish (ivy-mode . "")
-  :bind (("C-x b" . ivy-switch-buffer))
+  ;; :bind (("C-x b" . ivy-switch-buffer))
   :config
   (ivy-mode 1)
   ;; add ‘recentf-mode’ and bookmarks to ‘ivy-switch-buffer’.
