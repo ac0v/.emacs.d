@@ -45,8 +45,6 @@
   (setq-default evil-escape-delay 0.2)
   (evil-escape-mode))
 
-;TODO: ivy should do switch buffer, but somehow C-n does not work
-
 (use-package evil-leader
       :ensure t
       :config
