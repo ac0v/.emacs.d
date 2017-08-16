@@ -39,3 +39,4 @@ flycheck_init.el
 /srecode-map.el
 magithub/
 .cask/
+/.tern-port
