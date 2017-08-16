@@ -55,8 +55,7 @@
       (evil-leader/set-key
 		"k"  'kill-this-buffer
 		"e" 'find-file
-		"b" 'ido-switch-buffer))
-		;; "b" 'switch-to-buffer))
+		"b" 'switch-to-buffer))
 
 (use-package evil-org
       :ensure t
@@ -191,8 +190,8 @@
     "pt" 'counsel-projectile-test-project))
 
 ;; MINIBUFFER STUFF
-(use-package ivy :ensure t
-  :diminish (ivy-mode . "")
+(use-package ivy
+  :ensure t
   ;; :bind (("C-x b" . ivy-switch-buffer))
   :config
   (ivy-mode 1)
