@@ -275,6 +275,7 @@
 
 (use-package ycmd
   :ensure t
+  :bind (("M-." . ycmd-goto))
   :config
   (set-variable 'ycmd-global-config "/usr/share/vim/vimfiles/third_party/ycmd/ycmd/default_settings.json")
   (set-variable 'ycmd-server-command '("python2" "/usr/share/vim/vimfiles/third_party/ycmd/ycmd"))
@@ -378,6 +379,7 @@
 
 (use-package company-tern
   :ensure t
+  :bind (("M-." . tern-find-definition))
   :config
   ;; (setq tern-command '("node" "/usr/lib/node_modules/tern/bin/tern"))
   (evil-define-key 'normal js2-mode-map (kbd "g d") 'tern-find-definition)
@@ -581,6 +583,7 @@
 
 (use-package rtags
   :ensure t
+  :bind (("M-." rtags-find-symbol-at-point))
   :config
   (evil-define-key 'normal c-mode-map (kbd "g d") 'rtags-find-symbol-at-point)
   (evil-define-key 'normal c++-mode-map (kbd "g d") 'rtags-find-symbol-at-point)
@@ -633,6 +636,7 @@
 ;; GO
 (use-package go-mode
   :ensure t
+  :bind (("M-." godef-jump))
   :config
   (evil-define-key 'normal go-mode-map (kbd "g d") 'godef-jump))
 
@@ -853,6 +857,7 @@
 ;; RUST
 (use-package rust-mode
   :ensure t
+  :bind (("M-." racer-find-definition))
   :config
   (evil-define-key 'normal rust-mode-map (kbd "g d") 'racer-find-definition)
   (add-hook 'rust-mode-hook #'racer-mode))
