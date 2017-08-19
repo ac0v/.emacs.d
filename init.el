@@ -250,6 +250,7 @@
   :config
   (setq company-idle-delay 0
 	company-echo-delay 0
+	company-dabbrev-downcase nil
 	company-minimum-prefix-length 1
 	company-selection-wrap-around t
 	company-transformers '(company-sort-by-occurrence
