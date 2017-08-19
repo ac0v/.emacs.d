@@ -36,7 +36,7 @@
 (use-package evil-mc
     :ensure t
     :config
-    (evil-mc-mode  1))
+    (global-evil-mc-mode 1))
 
 (use-package evil-escape
   :ensure t
