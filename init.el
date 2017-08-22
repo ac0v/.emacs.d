@@ -274,7 +274,6 @@
   (yas-global-mode 1))
 
 (use-package ycmd
-  :ensure t
   :bind (("M-." . ycmd-goto))
   :config
   (set-variable 'ycmd-global-config "/usr/share/vim/vimfiles/third_party/ycmd/ycmd/default_settings.json")
@@ -294,6 +293,7 @@
     (flycheck-ycmd-setup))
 
   (use-package company-ycmd
+    :ensure t
     :config
     (company-ycmd-setup)))
 
