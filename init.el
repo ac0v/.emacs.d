@@ -75,7 +75,7 @@
       (evil-leader/set-key
 	"ci" 'evilnc-comment-or-uncomment-lines
 	"cl" 'evilnc-quick-comment-or-uncomment-to-the-line
-	"ll" 'evilnc-quick-comment-or-uncomment-to-the-line
+	;;"ll" 'evilnc-quick-comment-or-uncomment-to-the-line
 	"cc" 'evilnc-copy-and-comment-lines
 	"cp" 'evilnc-comment-or-uncomment-paragraphs
 	"cr" 'comment-or-uncomment-region))
@@ -370,6 +370,9 @@
 (use-package js2-mode
   :ensure t
   :config
+  (setq js2-mode-hook
+	'(lambda () (progn
+		      (set-variable 'indent-tabs-mode nil))))
   (add-hook 'js2-mode-hook #'js2-imenu-extras-mode))
 
 (use-package js2-refactor
@@ -382,6 +385,7 @@
   :bind (("M-." . tern-find-definition))
   :config
   ;; (setq tern-command '("node" "/usr/lib/node_modules/tern/bin/tern"))
+
   (evil-define-key 'normal js2-mode-map (kbd "g d") 'tern-find-definition)
   (add-to-list 'company-backends 'company-tern)
   (add-hook 'js2-mode-hook (lambda () (tern-mode))))
@@ -389,7 +393,7 @@
 (use-package nodejs-repl
   :ensure t
   :config
-  (add-hook 'js-mode-hook
+  (add-hook 'js2-mode-hook
           (lambda ()
             (define-key js-mode-map (kbd "C-x C-e") 'nodejs-repl-send-last-expression)
             (define-key js-mode-map (kbd "C-c C-j") 'nodejs-repl-send-line)
@@ -583,7 +587,7 @@
 
 (use-package rtags
   :ensure t
-  :bind (("M-." rtags-find-symbol-at-point))
+  :bind (("M-." . rtags-find-symbol-at-point))
   :config
   (evil-define-key 'normal c-mode-map (kbd "g d") 'rtags-find-symbol-at-point)
   (evil-define-key 'normal c++-mode-map (kbd "g d") 'rtags-find-symbol-at-point)
@@ -636,7 +640,7 @@
 ;; GO
 (use-package go-mode
   :ensure t
-  :bind (("M-." godef-jump))
+  :bind (("M-." . godef-jump))
   :config
   (evil-define-key 'normal go-mode-map (kbd "g d") 'godef-jump))
 
@@ -857,7 +861,7 @@
 ;; RUST
 (use-package rust-mode
   :ensure t
-  :bind (("M-." racer-find-definition))
+  :bind (("M-." . racer-find-definition))
   :config
   (evil-define-key 'normal rust-mode-map (kbd "g d") 'racer-find-definition)
   (add-hook 'rust-mode-hook #'racer-mode))
@@ -933,6 +937,9 @@
 (use-package counsel-dash
   :ensure t)
 
+(use-package exec-path-from-shell
+  :ensure t)
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -943,7 +950,7 @@
     ("/home/ben/Dropbox/org/habbits.org" "/home/ben/Dropbox/org/index.org" "~/workspace/perl6/Projective/TODO.org" "~/workspace/elisp/telmacs/TODO.org" "~/workspace/perl5/EMP/TODO.org" "~/workspace/uni/inside_my_iphone/TODO.org")))
  '(package-selected-packages
    (quote
-    (xref-js2 js2-refactor restclient nodejs-repl js-auto-beautify flymake-lua company-lua lua-mode calfw-ical calfw-org flycheck-ycmd company-ycmd ycmd www-synonyms paste-of-code gitter tree-mode ob-ipython julia-shell flycheck-julia magithub package-lint test-simple erlang swift-mode clojure-mode slack request evil-exchange langtool evil-mc ess company-quickhelp elpy comapny-jedi company-jedi evil-avy ivy-hydra hydra evil-org fireplace evil-lion ztree yaml-mode which-key web-mode use-package tide smex skewer-mode racer python-mode php-mode perl6-mode package-utils ox-reveal org-projectile org-evil org-bullets mu4e-alert latex-preview-pane json-mode ivy-rich highlight-symbol helm-perldoc google-translate git-messenger git-gutter+ ggtags flycheck-rust flycheck-rtags flycheck-perl6 expand-region evil-surround evil-snipe evil-smartparens evil-nerd-commenter evil-mu4e evil-magit evil-leader evil-escape evil-cleverparens ensime elfeed-org elfeed-goodies editorconfig dumb-jump disaster counsel-projectile company-web company-irony company-go company-flx company-auctex company-anaconda cmake-mode cmake-ide clang-format calfw atom-dark-theme ag ace-window))))
+    (flyparens highlight-parentheses exec-path-from-shell indium xref-js2 js2-refactor restclient nodejs-repl js-auto-beautify flymake-lua company-lua lua-mode calfw-ical calfw-org flycheck-ycmd company-ycmd ycmd www-synonyms paste-of-code gitter tree-mode ob-ipython julia-shell flycheck-julia magithub package-lint test-simple erlang swift-mode clojure-mode slack request evil-exchange langtool evil-mc ess company-quickhelp elpy comapny-jedi company-jedi evil-avy ivy-hydra hydra evil-org fireplace evil-lion ztree yaml-mode which-key web-mode use-package tide smex skewer-mode racer python-mode php-mode perl6-mode package-utils ox-reveal org-projectile org-evil org-bullets mu4e-alert latex-preview-pane json-mode ivy-rich highlight-symbol helm-perldoc google-translate git-messenger git-gutter+ ggtags flycheck-rust flycheck-rtags flycheck-perl6 expand-region evil-surround evil-snipe evil-smartparens evil-nerd-commenter evil-mu4e evil-magit evil-leader evil-escape evil-cleverparens ensime elfeed-org elfeed-goodies editorconfig dumb-jump disaster counsel-projectile company-web company-irony company-go company-flx company-auctex company-anaconda cmake-mode cmake-ide clang-format calfw atom-dark-theme ag ace-window))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
