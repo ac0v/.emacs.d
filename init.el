@@ -31,7 +31,7 @@
   :config
   (define-key evil-normal-state-map (kbd "C-u") 'evil-scroll-up)
   (define-key evil-normal-state-map (kbd "g f") 'imenu)
-  (evil-mode 1))
+  (evil-mode 0))
 
 (use-package evil-mc
     :ensure t
@@ -147,7 +147,7 @@
 (setq indent-tabs-mode nil
       auto-revert-interval 1
       inhibit-startup-message t
-      initial-scratch-message nil 
+      initial-scratch-message nil
       ring-bell-function 'ignore
       set-language-environment "UTF-8"
       abbrev-file-name "~/.emacs.d/.abbrev")
@@ -294,7 +294,6 @@
     (flycheck-ycmd-setup))
 
   (use-package company-ycmd
-    :ensure t
     :config
     (company-ycmd-setup)))
 
